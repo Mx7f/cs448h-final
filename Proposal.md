@@ -1,4 +1,5 @@
-A Language for Approximate Computation in FPGA pipelines
+**A Language for Approximate Computation in FPGA pipelines**
+
 Michael Mara
 
 * What is the goal of the project? What problem are you trying to solve?
@@ -28,7 +29,9 @@ The most relevant papers in this area are:
 Timeline:
 
 March 3: Base language complete, can lower to cpu code, handle fixed/float
+
 March 10: Lower to hardware
+
 March 17: Interesting example, automated optimization using ideas from 
 [Stochastic Optimization of Floating-Point Programs with Tunable Precision](https://cs.stanford.edu/people/eschkufz/docs/pldi_14.pdf) and [Grater: an approximation workflow for exploiting data-level parallelism in FPGA acceleration](http://cseweb.ucsd.edu/~alotfi/grater-date16.pdf)
 
