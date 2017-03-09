@@ -70,6 +70,14 @@ function getInputWires(node)
     return result
 end
 
+function getOutputWires(node)
+    local result = {}
+    for i,input in ipairs(node.outputs) do
+        result[i] = Wire(node, node.outputs[i])
+    end
+    return result
+end
+
 function visit(node, newNodes)
     node.marked = true
     for i,m in ipairs(node.outputs) do
@@ -100,53 +108,144 @@ function topologicalSort(nodes)
     end
 end
 
-
-function deleteNode(circuit, node)
-    topologicalSort(circuit.internalNodes)
-    assert(false,"TODO: implement deleteNode(circuit, node)")
-end
-
-function selectInternalNode(circuit, internalNodeIndex)
-    assert(false,"TODO: implement selectInternalNode(circuit, index)")
-end
-
-function nonInputNodeCount(circuit)
-    assert(false,"TODO: nonInputNodeCount(circuit)")
-end
-
-function upstreamNodes(circuit)
-    assert(false,"TODO: implement upstreamNodes(circuit, index)")
-end
-
-function setInput(circuit,node,index,inputNode)
-    topologicalSort(circuit.internalNodes)
-    assert(false,"TODO: implement setInput(node,index,inputNode)")
-end
-
-function selectNonInputNode(circuit, internalNodeIndex)
-    assert(false,"TODO: implement selectInternalNode(circuit, index)")
-end
-
-function selectWire(graph, wireIndex)
-    assert(false, "implement selectWire")
-end
-
-function deepCopy(circuit)
-    local newCircuit = {}
-    assert(false,"TODO: implement deepCopy(circuit)")
-    return newCircuit
-end
-
-function getWireArray(graph)
+function getWireArray(circuit)
     local wires = {}
-    for i,output in ipairs(graph.outputs) do
+    for i,output in ipairs(circuit.outputs) do
         wires = table.concat(wires, getInputWires(output))
     end
-    for i,node in ipairs(graph.internalNodes) do
+    for i,node in ipairs(circuit.internalNodes) do
         wires = table.concat(wires, getInputWires(node))
     end
     return wires
 end
+
+function makeConsistent(circuit)
+    circuit.wires = getWireArray(circuit)
+    topologicalSort(circuit.internalNodes)
+end
+
+function deleteNode(circuit, node)
+    local oldIndex = table.invert(circuit.internalNodes)[node]
+    table.remove(circuit.internalNodes, oldIndex)
+    local outWires = getOutputWires(node)
+    local inWires = getInputWires(node)
+    local passThrough = {}
+    for i,wire in ipairs(inWires) do
+        if wire.indexInOut == 1 then
+            -- TODO: randomize?
+            passThrough = wire.input
+            wire.input.outputs[wire.indexInIn] = node.outputs[1]
+        else 
+            table.remove(wire.input.outputs, wire.indexInIn)
+        end
+    end
+    for i,wire in ipairs(outWires) do
+        if wire.indexInIn == 1 then
+            -- TODO: randomize?
+            wire.output.inputs[wire.indexInOut] = passThrough
+        else 
+            -- TODO: randomize?
+            wire.output.inputs[wire.indexInOut] = circuit.groundNode
+        end
+    end
+    makeConsistent(circuit)
+end
+
+function selectInternalNode(circuit, internalNodeIndex)
+    return circuit.internalNodes[internalNodeIndex]
+end
+
+function nonInputNodeCount(circuit)
+    return #circuit.internalNodes + #circuit.outputs
+end
+
+local function addDownstreamNodes(node, downstreamNodeSet)
+    for i,v in ipairs(node.outputs) do
+        if v.type ~= NodeType.OUTPUT then
+            downstreamNodeSet[v] = true
+            addDownstreamNodes(v)
+        end
+    end
+end
+
+function upstreamNodes(circuit, node)
+    local downstreamNodesSansOutputs = {}
+    downstreamNodesSansOutputs[node] = true
+    if node.type ~= NodeType.OUTPUT then
+        addDownstreamNodes(node, downstreamNodesSansOutputs)
+    end
+    local upNodes = {}
+    for i,v in ipairs(circuit.internalNodes) do
+        if not downstreamNodesSansOutputs[v] do
+            upNodes[#upNodes+1] = v
+        end
+    end
+    for i,v in ipairs(circuit.inputs) do
+        upNodes[#upNodes+1] = v
+    end
+    return upNodes
+end
+
+function setInput(circuit,node,index,inputNode)
+    local wire = getInputWires(node)[index]
+    table.remove(wire.input.outputs[wire.indexInIn])
+    node.inputs[index] = inputNode
+    inputNode.outputs[#inputNode.outputs+1] = node
+    makeConsistent(circuit.internalNodes)
+end
+
+function selectNonInputNode(circuit, nonInputNodeIndex)
+    if nonInputNodeIndex > #circuit.internalNodes[internalNodeIndex] then
+        local i = nonInputNodeIndex - #circuit.internalNodes
+        return circuit.outputs[i]
+    else
+        return circuit.internalNodes[internalNodeIndex]
+    end
+    assert(false,"selectInternalNode index too large")
+end
+
+function selectWire(circuit, wireIndex)
+    return circuit.wires[wireIndex]
+end
+
+
+
+function deepCopy(circuit)
+    local newCircuit = {}
+    newCircuit.inputs = {}
+    newCircuit.internalNodes = {}
+    newCircuit.outputs = {}
+    local oldToNew = {}
+    for i=1,#circuit.inputs do 
+        newCircuit.inputs[i] = table.shallowcopy(circuit.inputs[i])
+        oldToNew[circuit.inputs[i]] = newCircuit.inputs[i]
+    end
+    for i=1,#circuit.outputs do 
+        newCircuit.outputs[i] = table.shallowcopy(circuit.outputs[i])
+        oldToNew[circuit.outputs[i]] = newCircuit.outputs[i]
+    end
+    for i=1,#circuit.internalNodes do 
+        newCircuit.internalNodes[i] = table.shallowcopy(circuit.internalNodes[i])
+        oldToNew[circuit.internalNodes[i]] = newCircuit.internalNodes[i]
+    end
+    -- Now node references at top level are fixed, need to fix all internal references
+    for oldN,newN in pairs(oldToNew) do
+        for i,v in ipairs(newN.inputs) do
+            newN.inputs[i] = oldToNew[v]
+        end
+        for i,v in ipairs(newN.outputs) do
+            newN.outputs[i] = oldToNew[v]
+        end
+        for i,v in ipairs(newN.internalNodes) do
+            newN.internalNodes[i] = oldToNew[v]
+        end
+    end
+    newCircuit.wires = getWireArray(newCircuit)
+    -- Topo sorting is maintained during deep copy
+    return newCircuit
+end
+
+
 
 local function InputNode()
     local node = {}
@@ -209,4 +308,14 @@ function emptyGraph(inputsCount, outputCount)
     graph.internalNodes = {}
     graph.wires = getWireArray(graph)
     return graph
+end
+
+function createTestSuite(circuit, inputs)
+    local tests = {}
+    tests.input = inputs
+    tests.output = {}
+    for i=1,#inputs do
+        tests.output[i] = runCircuit(circuit,tests.input[i])
+    end
+    return tests
 end

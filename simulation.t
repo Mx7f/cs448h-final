@@ -28,8 +28,3 @@ function runCircuit(circuit, input)
     end
     return output
 end
-
-local function evaluate(circuit, test)
-    out = runCircuit(circuit, test.input)
-    return hammingDistance(test.output, out)
-end

@@ -11,8 +11,21 @@ local function sizeCost(circuit)
     return #circuit.internalNodes
 end
 
+local function furtherstDistanceToInput(node)
+    local distance = 0
+    if node.inputs then
+        for i,v in ipairs(node.inputs) do
+            distance = max(distance, furtherstDistanceToInput(v)+1)
+        end
+    end
+    return distance
+end
+
 local function criticalPathLength(circuit)
-    assert(false,"TODO: implement criticalPathLength()")
+    local maxPathLength = 0
+    for i,v in pairs(circuit.outputs) do
+        maxPathLength = max(maxPathLength, furtherstDistanceToInput(v))
+    end
 end
 
 local function criticalCost(circuit)
@@ -45,10 +58,10 @@ local function errorCost(proposal, testCases, validationCases)
     return testResult
 end
 
-local function cost(proposal, testCases, validationCases, weightCorrect, weightCritical, weightSize)
+local function cost(proposal, testCases, validationCases, settings)
     local errCost = errorCost(proposal, testCases, validationCases)
-    local totalCost = errCost*weightCorrect + criticalCost(proposal)*weightCritical + sizeCost(proposal)*weightSize
-    return errCost, totalCost
+    local totalCost = errCost*settings.weightCorrect + criticalCost(proposal)*settings.weightCritical + sizeCost(proposal)*settings.weightSize
+    return totalCost, errCost 
 end
 
 local function totalProposalMass(settings)
@@ -121,4 +134,46 @@ local function createRewrite(currentCircuit, settings)
     end
 
     assert(false,"Reached what should be probability 0 case in createRewrite() with r = "..r)
+end
+
+function acceptRewrite(rewriteCost, previousCost, settings)
+-- Equation 5: https://raw.githubusercontent.com/StanfordPL/stoke/develop/docs/papers/cacm16.pdf
+    local acceptProbability = min(1.0, exp(-settings.beta*(rewriteCost-previousCost)))
+    return acceptProbability >= math.random()
+end
+
+function stochasticSearch(initialCircuit, testSet, validationSet, settings)
+    local currentCircuit = initialCircuit
+    local currentCost,currentCorrectCost = cost(initialCircuit, testSet, validationSet, settings)
+    print("Initial correctness cost: "..currentCorrectCost)
+    local bestCost = currentCost
+    local initialCost = currentCost
+    local bestCircuit = currentCircuit
+    local correctCircuits = {}
+    for i=1,settings.totalIterations do
+        if ((i-1) % settings.iterationsBetweenRestarts) == 0 then
+            currentCircuit = initialCircuit
+            currentCost = cost(initialCircuit, testSet, validationSet, settings)
+            local independentSearchCount = (i-1) / settings.iterationsBetweenRestarts
+            print("------------------------------")
+            print("    Independent Search "..independentSearchCount)
+            print("------------------------------")
+            print("Cost of initial circuit: "..currentCost)
+        end
+        local rewriteCircuit = createRewrite(currentCircuit,settings)
+        local rewriteCost,rewriteCorrectnessCost = cost(rewriteCircuit, testSet, validationSet, settings)
+        if acceptRewrite(rewriteCircuit, currentCost, rewriteCost) then
+            print("Iteration "..i.." Rewrite accepted with cost: "..rewriteCost..", correctness cost: "..rewriteCorrectnessCost)
+            currentCost = rewriteCost
+            currentCorrectCost = rewriteCorrectnessCost
+            currentCircuit = rewriteCircuit
+            if currentCorrectCost == 0 and currentCost < bestCost then
+                print("======= NEW BEST CIRCUIT ======")
+                correctCircuits[#correctCircuits + 1] = currentCircuit
+                bestCost = currentCost
+                bestCircuit = currentCircuit
+            end
+        end
+    end
+    return bestCircuit, bestCost, bestCost < initalCost, correctCircuits
 end

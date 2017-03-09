@@ -10,12 +10,18 @@ TODO: Add graphviz support
 
 TODO: JIT compile simulator
 
+TODO: Better LUT value manipulation
+
+TODO: Faster circuit manipulation
+
 --]]
 
 require("bithelpers")
 require("simulation")
 require("tablehelpers")
+
 require("circuit")
+--[[
 require("stochasticsearch")
 
 local fourBitDecoder = emptyGraph(4,3)
@@ -42,4 +48,31 @@ addLUTNode(fourBitDecoder, regularInputs, outputWires3[1], foursLUT)
 print("fourBitDecoder")
 printGraph(fourBitDecoder)
 
+local tests = createTestSuite(fourBitDecoder, jcounterStates)
+
+for i=1,#tests.input do
+    print(tests.input[i]..", "..tests.output[i])
+end
+
+
 print(runCircuit(fourBitDecoder,12))
+
+
+local searchSettings = {
+    addMass = 1,
+    deleteMass = 1,
+    inputSwapMass = 1,
+    lutChangeMass = 1,
+    totalIterations = 1000000,
+    iterationsBetweenRestarts = 100000,
+    beta = 1.0,
+    weightCorrect = 1.0,
+    weightCritical = 1.0,
+    weightSize = 1.0
+}
+--]]
+--[[local bestCircuit, bestCost, improved, correctCircuits = stochasticsearch(fourBitDecoder, tests, {}, searchSettings)
+local bestCircuit, bestCost
+bestCost = 0
+print("Best Cost: "..bestCost)
+--]]
