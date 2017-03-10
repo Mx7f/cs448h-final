@@ -21,7 +21,7 @@ require("simulation")
 require("tablehelpers")
 
 require("circuit")
---[[
+
 require("stochasticsearch")
 
 local fourBitDecoder = emptyGraph(4,3)
@@ -37,6 +37,7 @@ local outputWires1 = getInputWires(fourBitDecoder.outputs[1])
 
 addLUTNode(fourBitDecoder, regularInputs, outputWires1[1], onesLUT)
 
+
 local twosLUT = setBits({js[3], js[4], js[7], js[8]})
 local outputWires2 = getInputWires(fourBitDecoder.outputs[2])
 addLUTNode(fourBitDecoder, regularInputs, outputWires2[1], twosLUT)
@@ -46,7 +47,7 @@ local outputWires3 = getInputWires(fourBitDecoder.outputs[3])
 addLUTNode(fourBitDecoder, regularInputs, outputWires3[1], foursLUT)
 
 print("fourBitDecoder")
-printGraph(fourBitDecoder)
+--printGraph(deepCopy(fourBitDecoder))
 
 local tests = createTestSuite(fourBitDecoder, jcounterStates)
 
@@ -70,9 +71,8 @@ local searchSettings = {
     weightCritical = 1.0,
     weightSize = 1.0
 }
---]]
---[[local bestCircuit, bestCost, improved, correctCircuits = stochasticsearch(fourBitDecoder, tests, {}, searchSettings)
-local bestCircuit, bestCost
+print("Before search")
+local bestCircuit, bestCost, improved, correctCircuits = stochasticSearch(fourBitDecoder, tests, {}, searchSettings)
 bestCost = 0
 print("Best Cost: "..bestCost)
---]]
+--

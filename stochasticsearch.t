@@ -11,11 +11,12 @@ local function sizeCost(circuit)
     return #circuit.internalNodes
 end
 
-local function furtherstDistanceToInput(node)
+local function furthestDistanceToInput(node)
     local distance = 0
     if node.inputs then
         for i,v in ipairs(node.inputs) do
-            distance = max(distance, furtherstDistanceToInput(v)+1)
+            local dist = furthestDistanceToInput(v)+1
+            distance = math.max(distance, dist)
         end
     end
     return distance
@@ -23,16 +24,15 @@ end
 
 local function criticalPathLength(circuit)
     local maxPathLength = 0
-    for i,v in pairs(circuit.outputs) do
-        maxPathLength = max(maxPathLength, furtherstDistanceToInput(v))
+    for i,v in ipairs(circuit.outputs) do
+        local dist = furthestDistanceToInput(v)
+        maxPathLength = math.max(maxPathLength, dist)
     end
+    return maxPathLength
 end
 
 local function criticalCost(circuit)
-    critPathLength = 0
-    for _,node in circuit.outputs do
-        critPathLength = max(critPathLength,criticalPathLength(node))
-    end
+    local critPathLength = criticalPathLength(circuit)
     return critPathLength
 end
 
@@ -60,7 +60,9 @@ end
 
 local function cost(proposal, testCases, validationCases, settings)
     local errCost = errorCost(proposal, testCases, validationCases)
+    print("error cost")
     local totalCost = errCost*settings.weightCorrect + criticalCost(proposal)*settings.weightCritical + sizeCost(proposal)*settings.weightSize
+    print("total cost")
     return totalCost, errCost 
 end
 
@@ -70,28 +72,30 @@ end
 
 --
 local function addRewrite(original, rnd) 
-    newCircuit = deepCopy(original)
-    wire = selectWire(newCircuit, math.ceil(rnd*wireCount(original)))
+    local newCircuit = deepCopy(original)
+    print("About to select wire")
+    local wire = selectWire(newCircuit, math.ceil(rnd*wireCount(original)))
     -- TODO: should we select inputs at random upstream from parent node?
-    inputs = {wire.input, newCircuit.ground, newCircuit.ground, newCircuit.ground}
+    local inputs = {wire.input, newCircuit.ground, newCircuit.ground, newCircuit.ground}
     -- TODO: should this not be random?
-    lutValue = math.random(math.pow(2,16))-1
-    node = addLUTNode(newCircuit, inputs, wire, lutValue)
+    local lutValue = math.random(math.pow(2,16))-1
+    print("About to add LUT")
+    addLUTNode(newCircuit, inputs, wire, lutValue)
     return newCircuit
 end
 
 local function deleteRewrite(original, rnd)
-    newCircuit = deepCopy(original)
-    node = selectInternalNode(newCircuit, math.ceil(rnd*internalNodeCount(original)))
+    local newCircuit = deepCopy(original)
+    local node = selectInternalNode(newCircuit, math.ceil(rnd*internalNodeCount(original)))
     deleteNode(newCircuit, node)
     return newCircuit
 end
 
 local function inputSwapRewrite(original, rnd)
-    newCircuit = deepCopy(original)
-    node,isOutput = selectNonInputNode(newCircuit, math.ceil(rnd*nonInputNodeCount(original)))
-    potentialInputs = upstreamNodes(newCircuit,node)
-    chosenInput = potentialInputs[math.ceil(rnd*(#potentialInputs))]
+    local newCircuit = deepCopy(original)
+    local node,isOutput = selectNonInputNode(newCircuit, math.ceil(rnd*nonInputNodeCount(original)))
+    local potentialInputs = upstreamNodes(newCircuit,node)
+    local chosenInput = potentialInputs[math.ceil(rnd*(#potentialInputs))]
     if isOutput then
         setInput(newCircuit, node, 1, chosenInput)
     else
@@ -102,34 +106,45 @@ local function inputSwapRewrite(original, rnd)
 end
 
 local function lutChangeRewrite(original, rnd)
-    newCircuit = deepCopy(original)
-    node = selectInternalNode(newCircuit, math.ceil(rnd*internalNodeCount(original)))
+    print("in lutChangeRewrite")
+    local newCircuit = deepCopy(original)
+    print("making index")
+    local index = math.ceil(rnd*internalNodeCount(original))
+    print("about to select")
+    local node = selectInternalNode(newCircuit, index)
+    print("selectInternalNode")
     -- TODO: should this not be random?
-    lutValue = math.random(math.pow(2,16))-1
+    local lutValue = math.random(math.pow(2,16))-1
     setLUTValue(node, lutValue)
+    print("lutValue")
     return newCircuit
 end
 
 local function createRewrite(currentCircuit, settings)
-    massSum = totalProposalMass(settings)
+    local massSum = totalProposalMass(settings)
+    print("massSum: "..massSum)
     local r = math.random()*massSum
 
     if r < settings.addMass then
+        print("addRewrite")
         return addRewrite(currentCircuit, r/settings.addMass)
     end
     r = r - settings.addMass
 
     if r < settings.deleteMass then
+        print("deleteMass")
         return deleteRewrite(currentCircuit, r/settings.deleteMass)
     end
     r = r - settings.deleteMass
 
     if r < settings.inputSwapMass then
+        print("inputSwapRewrite")
         return inputSwapRewrite(currentCircuit, r/settings.inputSwapMass)
     end
     r = r - settings.inputSwapMass
 
     if r < settings.lutChangeMass then
+        print("lutChangeRewrite")
         return lutChangeRewrite(currentCircuit, r/settings.lutChangeMass)
     end
 
@@ -137,12 +152,15 @@ local function createRewrite(currentCircuit, settings)
 end
 
 function acceptRewrite(rewriteCost, previousCost, settings)
+    print("acceptRewrite")
 -- Equation 5: https://raw.githubusercontent.com/StanfordPL/stoke/develop/docs/papers/cacm16.pdf
-    local acceptProbability = min(1.0, exp(-settings.beta*(rewriteCost-previousCost)))
+    local acceptProbability = math.min(1.0, math.exp(-settings.beta*(rewriteCost-previousCost)))
+    print("acceptProbability="..acceptProbability)
     return acceptProbability >= math.random()
 end
 
 function stochasticSearch(initialCircuit, testSet, validationSet, settings)
+    print("Stochastic Search")
     local currentCircuit = initialCircuit
     local currentCost,currentCorrectCost = cost(initialCircuit, testSet, validationSet, settings)
     print("Initial correctness cost: "..currentCorrectCost)
@@ -161,8 +179,12 @@ function stochasticSearch(initialCircuit, testSet, validationSet, settings)
             print("Cost of initial circuit: "..currentCost)
         end
         local rewriteCircuit = createRewrite(currentCircuit,settings)
+        print("Rewritten")
         local rewriteCost,rewriteCorrectnessCost = cost(rewriteCircuit, testSet, validationSet, settings)
-        if acceptRewrite(rewriteCircuit, currentCost, rewriteCost) then
+        nodeSanityCheck(rewriteCircuit)
+        print("========")
+        nodeSanityCheck(currentCircuit)
+        if acceptRewrite(currentCost, rewriteCost, settings) then
             print("Iteration "..i.." Rewrite accepted with cost: "..rewriteCost..", correctness cost: "..rewriteCorrectnessCost)
             currentCost = rewriteCost
             currentCorrectCost = rewriteCorrectnessCost
@@ -173,6 +195,8 @@ function stochasticSearch(initialCircuit, testSet, validationSet, settings)
                 bestCost = currentCost
                 bestCircuit = currentCircuit
             end
+        else
+            print("Rewrite rejected")
         end
     end
     return bestCircuit, bestCost, bestCost < initalCost, correctCircuits
