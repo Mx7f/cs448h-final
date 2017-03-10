@@ -15,13 +15,11 @@ TODO: Better LUT value manipulation
 TODO: Faster circuit manipulation
 
 --]]
-
+require("util")
+require("tablehelpers")
 require("bithelpers")
 require("simulation")
-require("tablehelpers")
-
 require("circuit")
-
 require("stochasticsearch")
 
 local fourBitDecoder = emptyGraph(4,3)
@@ -51,8 +49,8 @@ print("fourBitDecoder")
 
 local tests = createTestSuite(fourBitDecoder, jcounterStates)
 
-for i=1,#tests.input do
-    print(tests.input[i]..", "..tests.output[i])
+for i=1,#tests do
+    print(tests[i].input..", "..tests[i].output)
 end
 
 

@@ -1,9 +1,10 @@
 require("circuit")
 require("bithelpers")
 require("simulation")
+require("util")
 
 function evaluate(circuit, test)
-    out = runCircuit(circuit, test.input)
+    local out = runCircuit(circuit, test.input)
     return hammingDistance(test.output, out)
 end
 
@@ -39,20 +40,23 @@ end
 
 local function errorCost(proposal, testCases, validationCases)
     local testResult = 0
+    log.trace(#testCases, " testCases")
     for _,test in ipairs(testCases) do
         testResult = testResult + evaluate(proposal,test)
     end
+    log.info("Raw test case score ", testResult)
     -- Adjustment to make sure failing N tests is worse than failing N+1 validation cases
     -- after passing all test cases
-    testResult = testResult * (#validationCases)
-
+    testResult = testResult * (#validationCases + 1)
+    log.info("Adjusted test case score ", testResult)
     if testResult == 0 then
-        print("Proposal passed all tests, running validation")
+        log.info("Proposal passed all tests, running validation")
         for _,test in ipairs(validationCases) do
             testResult = testResult + evaluate(proposal,test)
         end
+        log.info("Final test case score ", testResult)
         if testResult == 0 then
-            print("validation cases failed: "..testResult)
+            log.info("validation cases failed: ", testResult)
         end
     end
     return testResult
@@ -60,9 +64,9 @@ end
 
 local function cost(proposal, testCases, validationCases, settings)
     local errCost = errorCost(proposal, testCases, validationCases)
-    print("error cost: "..errCost)
+    log.info("error cost: "..errCost)
     local totalCost = errCost*settings.weightCorrect + criticalCost(proposal)*settings.weightCritical + sizeCost(proposal)*settings.weightSize
-    print("total cost "..totalCost)
+    log.info("total cost "..totalCost)
     return totalCost, errCost 
 end
 
@@ -73,13 +77,13 @@ end
 --
 local function addRewrite(original, rnd) 
     local newCircuit = deepCopy(original)
-    print("About to select wire")
+    log.trace("About to select wire")
     local wire = selectWire(newCircuit, math.ceil(rnd*wireCount(original)))
     -- TODO: should we select inputs at random upstream from parent node?
     local inputs = {wire.input, newCircuit.ground, newCircuit.ground, newCircuit.ground}
     -- TODO: should this not be random?
     local lutValue = math.random(math.pow(2,16))-1
-    print("About to add LUT")
+    log.trace("About to add LUT")
     addLUTNode(newCircuit, inputs, wire, lutValue)
     return newCircuit
 end
@@ -94,61 +98,61 @@ end
 local function inputSwapRewrite(original, rnd)
     local newCircuit = deepCopy(original)
     local node,isOutput = selectNonInputNode(newCircuit, math.ceil(rnd*nonInputNodeCount(original)))
-    print("Getting potential inputs")
+    log.trace("Getting potential inputs")
     local potentialInputs = upstreamNodes(newCircuit,node)
-    print("Selecting input")
+    log.trace("Selecting input")
     local chosenInput = potentialInputs[math.ceil(rnd*(#potentialInputs))]
-    print("Setting Input")
+    log.trace("Setting Input")
     if isOutput then
         setInput(newCircuit, node, 1, chosenInput)
     else
         local i = math.random(4)
         setInput(newCircuit, node, i, chosenInput)
     end
-    print("Set")
+    log.trace("Set")
     return newCircuit
 end
 
 local function lutChangeRewrite(original, rnd)
-    print("in lutChangeRewrite")
+    log.trace("in lutChangeRewrite")
     local newCircuit = deepCopy(original)
-    print("making index")
+    log.trace("making index")
     local index = math.ceil(rnd*internalNodeCount(original))
-    print("about to select")
+    log.trace("about to select")
     local node = selectInternalNode(newCircuit, index)
-    print("selectInternalNode")
+    log.trace("selectInternalNode")
     -- TODO: should this not be random?
     local lutValue = math.random(math.pow(2,16))-1
     setLUTValue(node, lutValue)
-    print("lutValue")
+    log.trace("lutValue")
     return newCircuit
 end
 
 local function createRewrite(currentCircuit, settings)
     local massSum = totalProposalMass(settings)
-    print("massSum: "..massSum)
+    log.debug("massSum: "..massSum)
     local r = math.random()*massSum
 
     if r < settings.addMass then
-        print("addRewrite")
+        log.info("addRewrite")
         return addRewrite(currentCircuit, r/settings.addMass)
     end
     r = r - settings.addMass
 
     if r < settings.deleteMass then
-        print("deleteMass")
+        log.info("deleteMass")
         return deleteRewrite(currentCircuit, r/settings.deleteMass)
     end
     r = r - settings.deleteMass
 
     if r < settings.inputSwapMass then
-        print("inputSwapRewrite")
+        log.info("inputSwapRewrite")
         return inputSwapRewrite(currentCircuit, r/settings.inputSwapMass)
     end
     r = r - settings.inputSwapMass
 
     if r < settings.lutChangeMass then
-        print("lutChangeRewrite")
+        log.info("lutChangeRewrite")
         return lutChangeRewrite(currentCircuit, r/settings.lutChangeMass)
     end
 
@@ -156,16 +160,19 @@ local function createRewrite(currentCircuit, settings)
 end
 
 function acceptRewrite(rewriteCost, previousCost, settings)
-    print("acceptRewrite")
+    log.trace("acceptRewrite")
 -- Equation 5: https://raw.githubusercontent.com/StanfordPL/stoke/develop/docs/papers/cacm16.pdf
     local acceptProbability = math.min(1.0, math.exp(-settings.beta*(rewriteCost-previousCost)))
-    print("acceptProbability="..acceptProbability)
+    log.info("acceptProbability="..acceptProbability)
     return acceptProbability >= math.random()
 end
 
 function stochasticSearch(initialCircuit, testSet, validationSet, settings)
-    print("Stochastic Search")
+    log.trace("Stochastic Search")
     local currentCircuit = initialCircuit
+    setLUTValue(initialCircuit.internalNodes[1], 0)
+    setLUTValue(initialCircuit.internalNodes[2], 0)
+    setLUTValue(initialCircuit.internalNodes[3], 0)
     local currentCost,currentCorrectCost = cost(initialCircuit, testSet, validationSet, settings)
     print("Initial correctness cost: "..currentCorrectCost)
     local bestCost = currentCost
@@ -183,25 +190,32 @@ function stochasticSearch(initialCircuit, testSet, validationSet, settings)
             print("Cost of initial circuit: "..currentCost)
         end
         local rewriteCircuit = createRewrite(currentCircuit,settings)
-        print("Rewritten")
+        log.trace("Rewritten")
         local rewriteCost,rewriteCorrectnessCost = cost(rewriteCircuit, testSet, validationSet, settings)
-        nodeSanityCheck(rewriteCircuit)
-        print("========")
-        nodeSanityCheck(currentCircuit)
-        if acceptRewrite(currentCost, rewriteCost, settings) then
-            print("Iteration "..i.." Rewrite accepted with cost: "..rewriteCost..", correctness cost: "..rewriteCorrectnessCost)
+        if log.level == "debug" or log.level == "trace" then 
+            nodeSanityCheck(rewriteCircuit)
+            print("========")
+            nodeSanityCheck(currentCircuit) 
+        end
+        if acceptRewrite(rewriteCost, currentCost, settings) then
+            log.info("Iteration "..i.." Rewrite accepted with cost: "..rewriteCost..", correctness cost: "..rewriteCorrectnessCost)
             currentCost = rewriteCost
             currentCorrectCost = rewriteCorrectnessCost
             currentCircuit = rewriteCircuit
             if currentCorrectCost == 0 and currentCost < bestCost then
-                print("======= NEW BEST CIRCUIT ======")
+                print("======================= NEW BEST CIRCUIT "..i.." =========================")
+                print("Cost: "..currentCost..", error cost "..currentCorrectCost)
                 correctCircuits[#correctCircuits + 1] = currentCircuit
                 bestCost = currentCost
                 bestCircuit = currentCircuit
+            elseif currentCorrectCost == 0 and currentCost == bestCost then
+                log.info("----- Equivalent best circuit: "..i)
+            elseif currentCost < bestCost then
+                log.info("----- Incorrect lower cost circuit: "..i)
             end
         else
-            print("Rewrite rejected")
+            log.info("Rewrite rejected")
         end
     end
-    return bestCircuit, bestCost, bestCost < initalCost, correctCircuits
+    return bestCircuit, bestCost, bestCost < initialCost, correctCircuits
 end

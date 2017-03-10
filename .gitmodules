@@ -1,0 +1,3 @@
+[submodule "log.lua"]
+	path = log
+	url = https://github.com/rxi/log.lua.git

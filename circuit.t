@@ -1,6 +1,6 @@
 require("simulation")
 require("tablehelpers")
-
+require("util")
 NodeType = {INTERNAL={},INPUT={},OUTPUT={}}
 
 function nodeTypeString(typ)
@@ -52,12 +52,12 @@ local function Wire(input, output)
     wire.output = output
     wire.indexInOut = table.invert(output.inputs)[input]
     if not wire.indexInOut then
-        print("No indexInOut")
-        print(nodeTypeString(wire.input.type))
-        print(nodeTypeString(wire.output.type))
-        print("#output.inputs = "..#output.inputs)
+        log.trace("No indexInOut")
+        log.trace(nodeTypeString(wire.input.type))
+        log.trace(nodeTypeString(wire.output.type))
+        log.trace("#output.inputs = ", #output.inputs)
         for i,v in ipairs(output.inputs) do
-            print("output.inputs[i] = "..nodeTypeString(v.type))
+            log.trace("output.inputs[i] = ", nodeTypeString(v.type))
         end
 
     end
@@ -69,7 +69,7 @@ end
 function getInputWires(node)
     local result = {}
     for i,input in ipairs(node.inputs) do
-        print(tostring(node.inputs[i]).." -> "..tostring(node))
+        log.trace(tostring(node.inputs[i])," -> ",tostring(node))
         result[i] = Wire(node.inputs[i],node)
     end
     return result
@@ -108,12 +108,12 @@ end
 function getWireArray(circuit)
     local wires = {}
     for i,output in ipairs(circuit.outputs) do
-        wires = table.concat(wires, getInputWires(output))
+        wires = table.concattables(wires, getInputWires(output))
     end
     for i,node in ipairs(circuit.internalNodes) do
-        wires = table.concat(wires, getInputWires(node))
+        wires = table.concattables(wires, getInputWires(node))
     end
-    print("wireArray size: "..#wires)
+    log.debug("wireArray size: "..#wires)
     return wires
 end
 
@@ -123,22 +123,22 @@ function makeConsistent(circuit)
 end
 
 function deleteNode(circuit, node)
-    print("deleteNode")
-    print("patching inputs")
+    log.trace("deleteNode")
+    log.trace("patching inputs")
     for i,wire in ipairs(circuit.wires) do
         if wire.input == node then
             --TODO: randomize?
             wire.output.inputs[wire.indexInOut] = node.inputs[1]
         end
     end
-    print("Actual removal")
+    log.trace("Actual removal")
     local oldIndex = table.invert(circuit.internalNodes)[node]
     table.remove(circuit.internalNodes, oldIndex)
     makeConsistent(circuit)
 end
 
 function selectInternalNode(circuit, internalNodeIndex)
-    print("selectInternalNode("..internalNodeIndex..")")
+    log.trace("selectInternalNode("..internalNodeIndex..")")
     return circuit.internalNodes[internalNodeIndex]
 end
 
@@ -164,12 +164,12 @@ end
 
 function setInput(circuit,node,index,inputNode)
     node.inputs[index] = inputNode
-    print("Input set. Making consistent")
+    log.trace("Input set. Making consistent")
     makeConsistent(circuit)
 end
 
 function selectNonInputNode(circuit, nonInputNodeIndex)
-    print("selectNonInputNode")
+    log.trace("selectNonInputNode")
     if nonInputNodeIndex > #circuit.internalNodes then
         local i = nonInputNodeIndex - #circuit.internalNodes
         return circuit.outputs[i], true
@@ -196,9 +196,7 @@ function twoLevelCopyNode(node)
 end
 
 function deepCopy(circuit)
-    print("Before Deep Copy")
-    getWireArray(circuit)
-    print("Deep copy")
+    log.trace("Deep copy")
     local newCircuit = {}
     newCircuit.inputs = {}
     newCircuit.internalNodes = {}
@@ -207,7 +205,7 @@ function deepCopy(circuit)
     for i=1,#circuit.inputs do 
         newCircuit.inputs[i] = twoLevelCopyNode(circuit.inputs[i])
         if oldToNew[circuit.inputs[i]] then
-            print("==== DUPLICATE CIRCUIT IN DEEP COPY (INPUTS): "..tostring(oldToNew[circuit.inputs[i]]))
+            log.error("==== DUPLICATE CIRCUIT IN DEEP COPY (INPUTS): "..tostring(oldToNew[circuit.inputs[i]]))
             assert(false)
         end
         oldToNew[circuit.inputs[i]] = newCircuit.inputs[i]
@@ -215,7 +213,7 @@ function deepCopy(circuit)
     for i=1,#circuit.outputs do 
         newCircuit.outputs[i] = twoLevelCopyNode(circuit.outputs[i])
         if oldToNew[circuit.outputs[i]] then
-            print("==== DUPLICATE CIRCUIT IN DEEP COPY (OUTPUTS): "..tostring(oldToNew[circuit.outputs[i]]))
+            log.error("==== DUPLICATE CIRCUIT IN DEEP COPY (OUTPUTS): "..tostring(oldToNew[circuit.outputs[i]]))
             assert(false)
         end
         oldToNew[circuit.outputs[i]] = newCircuit.outputs[i]
@@ -223,7 +221,7 @@ function deepCopy(circuit)
     for i=1,#circuit.internalNodes do 
         newCircuit.internalNodes[i] = twoLevelCopyNode(circuit.internalNodes[i])
         if oldToNew[circuit.internalNodes[i]] then
-            print("==== DUPLICATE CIRCUIT IN DEEP COPY (INTERNAL): "..tostring(oldToNew[circuit.internalNodes[i]]))
+            log.error("==== DUPLICATE CIRCUIT IN DEEP COPY (INTERNAL): "..tostring(oldToNew[circuit.internalNodes[i]]))
             assert(false)
         end
         oldToNew[circuit.internalNodes[i]] = newCircuit.internalNodes[i]
@@ -231,8 +229,8 @@ function deepCopy(circuit)
     -- Now node references at top level are fixed, need to fix all internal references
 
     for oldN,newN in pairs(oldToNew) do
-        print("old: "..tostring(oldN))
-        print("new: "..tostring(newN))
+        log.trace("old: "..tostring(oldN))
+        log.trace("new: "..tostring(newN))
         if newN.inputs and #newN.inputs > 0 then
             for i,v in ipairs(newN.inputs) do
                 newN.inputs[i] = oldToNew[v]
@@ -241,7 +239,7 @@ function deepCopy(circuit)
     end
     newCircuit.wires = getWireArray(newCircuit)
     -- Topo sorting is maintained during deep copy
-    print("Deep copy done")
+    log.trace("Deep copy done")
     return newCircuit
 end
 
@@ -282,23 +280,23 @@ function setLUTValue(node, lutValue)
 end
 
 function nodeSanityCheck(circuit)
-    print("NODE SANITY CHECK")
+    log.debug("NODE SANITY CHECK")
     local validNodes = {}
     for i,v in ipairs(circuit.inputs) do validNodes[v] = true end
     for i,v in ipairs(circuit.outputs) do validNodes[v] = true end
     for i,v in ipairs(circuit.internalNodes) do validNodes[v] = true end
-    print("SETUP DONE")
+    log.debug("SETUP DONE")
     for k,v in pairs(validNodes) do
         if (k.inputs) and #k.inputs > 0 then
             for i,node in ipairs(k.inputs) do
                 if not validNodes[node] then
-                    print("INVALID NODE FOUND IN INPUT "..i.." OF "..nodeTypeString(k.type))
-                    print("Claims to be "..nodeTypeString(node.type))
+                    log.error("INVALID NODE FOUND IN INPUT ", i, " OF ", nodeTypeString(k.type))
+                    log.error("Claims to be ", nodeTypeString(node.type))
                 end
             end
         end
     end
-    print("NODE SANITY CHECK DONE")
+    log.debug("NODE SANITY CHECK DONE")
 end
 
 function isNode(circuit, node)
@@ -311,10 +309,10 @@ end
 
 function addLUTNode(graph, inputs, wire, lutValue)
     for i,v in ipairs(inputs) do
-        print(isNode(graph,v))
+        log.trace(isNode(graph,v))
     end
-    print(isNode(graph,wire.input))
-    print(isNode(graph,wire.output))
+    log.trace(isNode(graph,wire.input))
+    log.trace(isNode(graph,wire.output))
 
     local node = LUTNode(inputs,lutValue)
     wire.output.inputs[wire.indexInOut] = node
@@ -323,7 +321,7 @@ function addLUTNode(graph, inputs, wire, lutValue)
 
     topologicalSort(graph.internalNodes)
     graph.wires = getWireArray(graph)
-    print("LUTNODE added")
+    log.debug("LUTNODE added")
 end
 
 function emptyGraph(inputsCount, outputCount)
@@ -347,10 +345,11 @@ end
 
 function createTestSuite(circuit, inputs)
     local tests = {}
-    tests.input = inputs
-    tests.output = {}
     for i=1,#inputs do
-        tests.output[i] = runCircuit(circuit,tests.input[i])
+        local test = {}
+        test.input = inputs[i]
+        test.output = runCircuit(circuit,test.input)
+        tests[i] = test
     end
     return tests
 end

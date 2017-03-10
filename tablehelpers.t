@@ -1,3 +1,4 @@
+
 function table.invert(t)
   local u = { }
   for k, v in pairs(t) do u[v] = k end
@@ -14,7 +15,7 @@ function table.slice(tbl, first, last, step)
   return sliced
 end
 
-function table.concat(t1,t2)
+function table.concattables(t1,t2)
     for i=1,#t2 do
         t1[#t1+1] = t2[i]
     end
