@@ -25,13 +25,6 @@ function printNode(node)
         end
         io.write("}\n")
     end
-    if node.outputs and #node.outputs > 0 then
-        io.write("  outputs[", tostring(#node.outputs), "] = {")
-        for i,output in ipairs(node.outputs) do
-            io.write(nodeTypeString(output.type), ", ")
-        end
-        io.write("}\n")
-    end
     if node.lutValue then
         print("  lutValue = "..string.format("%x", node.lutValue))
     end
@@ -58,18 +51,6 @@ local function Wire(input, output)
     wire.input = input
     wire.output = output
     wire.indexInOut = table.invert(output.inputs)[input]
-    wire.indexInIn = table.invert(input.outputs)[output]
-    if not wire.indexInIn then
-        print("No indexInIn")
-        print("input: "..tostring(input))
-        print("output: "..tostring(output))
-        print(nodeTypeString(wire.input.type))
-        print(nodeTypeString(wire.output.type))
-        print("#input.outputs = "..#input.outputs)
-        for i,v in ipairs(input.outputs) do
-            print("input.outputs[i] = "..nodeTypeString(v.type))
-        end
-    end
     if not wire.indexInOut then
         print("No indexInOut")
         print(nodeTypeString(wire.input.type))
@@ -94,17 +75,9 @@ function getInputWires(node)
     return result
 end
 
-function getOutputWires(node)
-    local result = {}
-    for i,input in ipairs(node.outputs) do
-        result[i] = Wire(node, node.outputs[i])
-    end
-    return result
-end
-
 function visit(node, newNodes)
     node.marked = true
-    for i,m in ipairs(node.outputs) do
+    for i,m in ipairs(node.inputs) do
         if m.type == NodeType.INTERNAL then
             visit(m, newNodes)
         end
@@ -127,7 +100,8 @@ function topologicalSort(nodes)
 
     for i,v in ipairs(newNodes) do
         -- inline reverse
-        nodes[i] = newNodes[#newNodes-i+1]
+        --nodes[i] = newNodes[#newNodes-i+1]
+        nodes[i] = v
     end
 end
 
@@ -150,41 +124,16 @@ end
 
 function deleteNode(circuit, node)
     print("deleteNode")
+    print("patching inputs")
+    for i,wire in ipairs(circuit.wires) do
+        if wire.input == node then
+            --TODO: randomize?
+            wire.output.inputs[wire.indexInOut] = node.inputs[1]
+        end
+    end
+    print("Actual removal")
     local oldIndex = table.invert(circuit.internalNodes)[node]
     table.remove(circuit.internalNodes, oldIndex)
-    local outWires = getOutputWires(node)
-    local inWires = getInputWires(node)
-    local passThrough = {}
-     print("patching outputs "..#inWires)
-    for i,wire in ipairs(inWires) do
-        if wire.indexInOut == 1 then
-            -- TODO: randomize?
-            print("First index")
-            print(nodeTypeString(wire.input.type))
-            print(nodeTypeString(wire.output.type))
-            if not wire.indexInIn then
-                print("No indexInIn in deleteNode")
-            end
-            print("wire.indexInIn: "..(wire.indexInIn))
-            print("Changing wire.indexInIn/#wire.input.outputs "..wire.indexInIn.."/"..#wire.input.outputs)
-            passThrough = wire.input
-
-            wire.input.outputs[wire.indexInIn] = node.outputs[1]
-        else 
-            print("Removing")
-            table.remove(wire.input.outputs, wire.indexInIn)
-        end
-    end
-    print("patching inputs "..#outWires)
-    for i,wire in ipairs(outWires) do
-        if wire.indexInIn == 1 then
-            -- TODO: randomize?
-            wire.output.inputs[wire.indexInOut] = passThrough
-        else 
-            -- TODO: randomize?
-            wire.output.inputs[wire.indexInOut] = circuit.groundNode
-        end
-    end
     makeConsistent(circuit)
 end
 
@@ -197,27 +146,15 @@ function nonInputNodeCount(circuit)
     return #circuit.internalNodes + #circuit.outputs
 end
 
-function addDownstreamNodes(node, downstreamNodeSet)
-    for i,v in ipairs(node.outputs) do
-        if v.type ~= NodeType.OUTPUT then
-            downstreamNodeSet[v] = true
-            addDownstreamNodes(v)
-        end
-    end
-end
 
+--TODO: check if downstream nodes are really downstream?
 function upstreamNodes(circuit, node)
-    local downstreamNodesSansOutputs = {}
-    downstreamNodesSansOutputs[node] = true
-    --print("upstreamNodes")
-    if node.type ~= NodeType.OUTPUT then
-        addDownstreamNodes(node, downstreamNodesSansOutputs)
-    end
     local upNodes = {}
     for i,v in ipairs(circuit.internalNodes) do
-        if not downstreamNodesSansOutputs[v] then
-            upNodes[#upNodes+1] = v
+        if node == v then
+            break
         end
+        upNodes[#upNodes+1] = v
     end
     for i,v in ipairs(circuit.inputs) do
         upNodes[#upNodes+1] = v
@@ -226,20 +163,18 @@ function upstreamNodes(circuit, node)
 end
 
 function setInput(circuit,node,index,inputNode)
-    local wire = getInputWires(node)[index]
-    table.remove(wire.input.outputs[wire.indexInIn])
     node.inputs[index] = inputNode
-    inputNode.outputs[#inputNode.outputs+1] = node
-    makeConsistent(circuit.internalNodes)
+    print("Input set. Making consistent")
+    makeConsistent(circuit)
 end
 
 function selectNonInputNode(circuit, nonInputNodeIndex)
     print("selectNonInputNode")
-    if nonInputNodeIndex > #circuit.internalNodes[internalNodeIndex] then
+    if nonInputNodeIndex > #circuit.internalNodes then
         local i = nonInputNodeIndex - #circuit.internalNodes
         return circuit.outputs[i], true
     else
-        return circuit.internalNodes[internalNodeIndex], false
+        return circuit.internalNodes[nonInputNodeIndex], false
     end
     assert(false,"selectNonInputNode index too large")
 end
@@ -257,9 +192,6 @@ function twoLevelCopyNode(node)
     if copiedNode.inputs then
         copiedNode.inputs = table.shallowcopy(node.inputs)
     end
-    if copiedNode.outputs then
-        copiedNode.outputs = table.shallowcopy(node.outputs)
-    end
     return copiedNode
 end
 
@@ -276,6 +208,7 @@ function deepCopy(circuit)
         newCircuit.inputs[i] = twoLevelCopyNode(circuit.inputs[i])
         if oldToNew[circuit.inputs[i]] then
             print("==== DUPLICATE CIRCUIT IN DEEP COPY (INPUTS): "..tostring(oldToNew[circuit.inputs[i]]))
+            assert(false)
         end
         oldToNew[circuit.inputs[i]] = newCircuit.inputs[i]
     end
@@ -283,6 +216,7 @@ function deepCopy(circuit)
         newCircuit.outputs[i] = twoLevelCopyNode(circuit.outputs[i])
         if oldToNew[circuit.outputs[i]] then
             print("==== DUPLICATE CIRCUIT IN DEEP COPY (OUTPUTS): "..tostring(oldToNew[circuit.outputs[i]]))
+            assert(false)
         end
         oldToNew[circuit.outputs[i]] = newCircuit.outputs[i]
     end
@@ -290,6 +224,7 @@ function deepCopy(circuit)
         newCircuit.internalNodes[i] = twoLevelCopyNode(circuit.internalNodes[i])
         if oldToNew[circuit.internalNodes[i]] then
             print("==== DUPLICATE CIRCUIT IN DEEP COPY (INTERNAL): "..tostring(oldToNew[circuit.internalNodes[i]]))
+            assert(false)
         end
         oldToNew[circuit.internalNodes[i]] = newCircuit.internalNodes[i]
     end
@@ -301,11 +236,6 @@ function deepCopy(circuit)
         if newN.inputs and #newN.inputs > 0 then
             for i,v in ipairs(newN.inputs) do
                 newN.inputs[i] = oldToNew[v]
-            end
-        end
-        if newN.outputs and #newN.outputs > 0 then
-            for i,v in ipairs(newN.outputs) do
-                newN.outputs[i] = oldToNew[v]
             end
         end
     end
@@ -322,7 +252,6 @@ end
 local function InputNode()
     local node = {}
     node.type = NodeType.INPUT
-    node.outputs = {}
     return node
 end
 
@@ -339,10 +268,9 @@ local function OutputNode(inputNode)
     return node
 end
 
-local function LUTNode(inputs,output,lutValue)
+local function LUTNode(inputs,lutValue)
     local node      = {}
     node.inputs     = table.shallowcopy(inputs)
-    node.outputs    = {output}
     node.lutValue   = lutValue
     node.type       = NodeType.INTERNAL
     return node
@@ -361,27 +289,11 @@ function nodeSanityCheck(circuit)
     for i,v in ipairs(circuit.internalNodes) do validNodes[v] = true end
     print("SETUP DONE")
     for k,v in pairs(validNodes) do
-        if (k.outputs) and #k.outputs > 0 then
-            for i,node in ipairs(k.outputs) do
-                if not validNodes[node] then
-                    print("INVALID NODE FOUND IN OUTPUT "..i.." OF "..nodeTypeString(k.type))
-                    print("Claims to be "..nodeTypeString(node.type))
-                else
-                    if not table.invert(node.inputs)[k] then
-                        print("FOUND MISMATCHING WIRE IN OUTPUT "..i.." OF "..nodeTypeString(k.type))
-                    end
-                end
-            end
-        end
         if (k.inputs) and #k.inputs > 0 then
             for i,node in ipairs(k.inputs) do
                 if not validNodes[node] then
                     print("INVALID NODE FOUND IN INPUT "..i.." OF "..nodeTypeString(k.type))
                     print("Claims to be "..nodeTypeString(node.type))
-                else
-                    if not table.invert(node.outputs)[k] then
-                        print("FOUND MISMATCHING WIRE IN INPUT "..i.." OF "..nodeTypeString(k.type))
-                    end
                 end
             end
         end
@@ -404,16 +316,8 @@ function addLUTNode(graph, inputs, wire, lutValue)
     print(isNode(graph,wire.input))
     print(isNode(graph,wire.output))
 
-    local node = LUTNode(inputs,wire.output,lutValue)
-    print("Adding lut node, wire.indexInIn "..wire.indexInIn)
-    print(wire.input.outputs[wire.indexInIn])
-    print(wire.output)
+    local node = LUTNode(inputs,lutValue)
     wire.output.inputs[wire.indexInOut] = node
-
-    table.remove(wire.input.outputs,wire.indexInIn)
-    for i,v in ipairs(inputs) do
-        v.outputs[#v.outputs + 1]  = node
-    end
     
     graph.internalNodes[#graph.internalNodes+1] = node
 
@@ -434,8 +338,7 @@ function emptyGraph(inputsCount, outputCount)
     graph.inputs[inputsCount+2] = powerNode
     graph.outputs = {}
     for i=1,outputCount do 
-        graph.outputs[i] = OutputNode(groundNode) 
-        groundNode.outputs[#groundNode.outputs + 1] = graph.outputs[i]
+        graph.outputs[i] = OutputNode(groundNode)
     end
     graph.internalNodes = {}
     graph.wires = getWireArray(graph)

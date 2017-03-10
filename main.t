@@ -60,9 +60,9 @@ print(runCircuit(fourBitDecoder,12))
 
 
 local searchSettings = {
-    addMass = 1,
-    deleteMass = 1,
-    inputSwapMass = 1,
+    addMass = 0,
+    deleteMass = 0,
+    inputSwapMass = 0,
     lutChangeMass = 1,
     totalIterations = 1000000,
     iterationsBetweenRestarts = 100000,

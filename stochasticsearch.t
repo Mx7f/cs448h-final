@@ -60,9 +60,9 @@ end
 
 local function cost(proposal, testCases, validationCases, settings)
     local errCost = errorCost(proposal, testCases, validationCases)
-    print("error cost")
+    print("error cost: "..errCost)
     local totalCost = errCost*settings.weightCorrect + criticalCost(proposal)*settings.weightCritical + sizeCost(proposal)*settings.weightSize
-    print("total cost")
+    print("total cost "..totalCost)
     return totalCost, errCost 
 end
 
@@ -94,14 +94,18 @@ end
 local function inputSwapRewrite(original, rnd)
     local newCircuit = deepCopy(original)
     local node,isOutput = selectNonInputNode(newCircuit, math.ceil(rnd*nonInputNodeCount(original)))
+    print("Getting potential inputs")
     local potentialInputs = upstreamNodes(newCircuit,node)
+    print("Selecting input")
     local chosenInput = potentialInputs[math.ceil(rnd*(#potentialInputs))]
+    print("Setting Input")
     if isOutput then
         setInput(newCircuit, node, 1, chosenInput)
     else
-        i = math.random(4)
+        local i = math.random(4)
         setInput(newCircuit, node, i, chosenInput)
     end
+    print("Set")
     return newCircuit
 end
 
