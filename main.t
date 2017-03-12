@@ -43,7 +43,7 @@ addLUTNode(fourBitDecoder, regularInputs, outputWires2[1], twosLUT)
 local foursLUT = setBits({js[5], js[6], js[7], js[8]})
 local outputWires3 = getInputWires(fourBitDecoder.outputs[3])
 addLUTNode(fourBitDecoder, regularInputs, outputWires3[1], foursLUT)
-
+toGraphviz(fourBitDecoder, "default")
 print("fourBitDecoder")
 --printGraph(deepCopy(fourBitDecoder))
 
@@ -58,19 +58,27 @@ print(runCircuit(fourBitDecoder,12))
 
 
 local searchSettings = {
-    addMass = 0,
-    deleteMass = 0,
-    inputSwapMass = 0,
+    addMass = 1,
+    deleteMass = 1,
+    inputSwapMass = 1,
     lutChangeMass = 1,
-    totalIterations = 1000000,
-    iterationsBetweenRestarts = 100000,
+    totalIterations = 200000,
+    iterationsBetweenRestarts = 200000,
+    maxInternalNodes = 6,
+    minInternalNodes = 0,
     beta = 1.0,
-    weightCorrect = 1.0,
+    weightCorrect = 3.0,
     weightCritical = 1.0,
     weightSize = 1.0
 }
 print("Before search")
-local bestCircuit, bestCost, improved, correctCircuits = stochasticSearch(fourBitDecoder, tests, {}, searchSettings)
-bestCost = 0
-print("Best Cost: "..bestCost)
+--for i=1,3 do setLUTValue(fourBitDecoder.internalNodes[i], 0) end
+
+for i=1,3 do deleteNode(fourBitDecoder, fourBitDecoder.internalNodes[1]) end
+for i=1,10 do 
+    local bestCircuit, bestCost, improved, correctCircuits = stochasticSearch(fourBitDecoder, tests, {}, searchSettings)
+    print("Best Cost: "..bestCost)
+    toGraphviz(bestCircuit, "out/final"..i)
+end
+
 --

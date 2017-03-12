@@ -1,4 +1,3 @@
-require("simulation")
 require("tablehelpers")
 require("util")
 NodeType = {INTERNAL={},INPUT={},OUTPUT={}}
@@ -46,23 +45,11 @@ function printGraph(graph)
     end
 end
 
-local function Wire(input, output)
+local function Wire(input, output, indexInOut)
     local wire = {}
     wire.input = input
     wire.output = output
-    wire.indexInOut = table.invert(output.inputs)[input]
-    if not wire.indexInOut then
-        log.trace("No indexInOut")
-        log.trace(nodeTypeString(wire.input.type))
-        log.trace(nodeTypeString(wire.output.type))
-        log.trace("#output.inputs = ", #output.inputs)
-        for i,v in ipairs(output.inputs) do
-            log.trace("output.inputs[i] = ", nodeTypeString(v.type))
-        end
-
-    end
-    --assert(wire.indexInOut, "No indexInOut")
-    --assert(wire.indexInIn, "No indexInIn")
+    wire.indexInOut = indexInOut
     return wire
 end
 
@@ -70,7 +57,7 @@ function getInputWires(node)
     local result = {}
     for i,input in ipairs(node.inputs) do
         log.trace(tostring(node.inputs[i])," -> ",tostring(node))
-        result[i] = Wire(node.inputs[i],node)
+        result[i] = Wire(node.inputs[i],node, i)
     end
     return result
 end
@@ -78,7 +65,7 @@ end
 function visit(node, newNodes)
     node.marked = true
     for i,m in ipairs(node.inputs) do
-        if m.type == NodeType.INTERNAL then
+        if m.type == NodeType.INTERNAL and (not m.marked) then
             visit(m, newNodes)
         end
     end
@@ -128,6 +115,7 @@ function deleteNode(circuit, node)
     for i,wire in ipairs(circuit.wires) do
         if wire.input == node then
             --TODO: randomize?
+            log.debug("Patching wire at index "..wire.indexInOut)
             wire.output.inputs[wire.indexInOut] = node.inputs[1]
         end
     end
@@ -164,6 +152,7 @@ end
 
 function setInput(circuit,node,index,inputNode)
     node.inputs[index] = inputNode
+    log.trace("Setting index "..index.." to node type "..nodeTypeString(inputNode.type))
     log.trace("Input set. Making consistent")
     makeConsistent(circuit)
 end
@@ -202,10 +191,12 @@ function deepCopy(circuit)
     newCircuit.internalNodes = {}
     newCircuit.outputs = {}
     local oldToNew = {}
+    log.info("deepCopy of circuit with Inp/Int/Out: "..#circuit.inputs.."/"..#circuit.internalNodes.."/"..#circuit.outputs)
     for i=1,#circuit.inputs do 
         newCircuit.inputs[i] = twoLevelCopyNode(circuit.inputs[i])
         if oldToNew[circuit.inputs[i]] then
             log.error("==== DUPLICATE CIRCUIT IN DEEP COPY (INPUTS): "..tostring(oldToNew[circuit.inputs[i]]))
+            toGraphviz(circuit, "out/error")
             assert(false)
         end
         oldToNew[circuit.inputs[i]] = newCircuit.inputs[i]
@@ -214,6 +205,7 @@ function deepCopy(circuit)
         newCircuit.outputs[i] = twoLevelCopyNode(circuit.outputs[i])
         if oldToNew[circuit.outputs[i]] then
             log.error("==== DUPLICATE CIRCUIT IN DEEP COPY (OUTPUTS): "..tostring(oldToNew[circuit.outputs[i]]))
+            toGraphviz(circuit, "out/error")
             assert(false)
         end
         oldToNew[circuit.outputs[i]] = newCircuit.outputs[i]
@@ -222,6 +214,7 @@ function deepCopy(circuit)
         newCircuit.internalNodes[i] = twoLevelCopyNode(circuit.internalNodes[i])
         if oldToNew[circuit.internalNodes[i]] then
             log.error("==== DUPLICATE CIRCUIT IN DEEP COPY (INTERNAL): "..tostring(oldToNew[circuit.internalNodes[i]]))
+            toGraphviz(circuit, "out/error")
             assert(false)
         end
         oldToNew[circuit.internalNodes[i]] = newCircuit.internalNodes[i]
@@ -294,6 +287,8 @@ function nodeSanityCheck(circuit)
                     log.error("Claims to be ", nodeTypeString(node.type))
                 end
             end
+        elseif k.type ~= NodeType.INPUT then
+            log.error("NON-INPUT NODE WITHOUT INPUTS: ", nodeTypeString(k.type))
         end
     end
     log.debug("NODE SANITY CHECK DONE")
@@ -319,9 +314,16 @@ function addLUTNode(graph, inputs, wire, lutValue)
     
     graph.internalNodes[#graph.internalNodes+1] = node
 
-    topologicalSort(graph.internalNodes)
-    graph.wires = getWireArray(graph)
+    makeConsistent(graph)
     log.debug("LUTNODE added")
+end
+
+function ground(circuit)
+    return circuit.inputs[#circuit.inputs-1]
+end
+
+function power(circuit)
+    return circuit.inputs[#circuit.inputs]
 end
 
 function emptyGraph(inputsCount, outputCount)
@@ -343,13 +345,32 @@ function emptyGraph(inputsCount, outputCount)
     return graph
 end
 
-function createTestSuite(circuit, inputs)
-    local tests = {}
-    for i=1,#inputs do
-        local test = {}
-        test.input = inputs[i]
-        test.output = runCircuit(circuit,test.input)
-        tests[i] = test
+
+function uniqueNodeName(node)
+    return "node"..string.sub(tostring(node), 10)
+end
+
+function toGraphviz(circuit, filename)
+    local graph = graphviz()
+    for i=1,#circuit.inputs-2 do
+        graph:node(uniqueNodeName(circuit.inputs[i]), "input"..i-1)
     end
-    return tests
+    graph:node(uniqueNodeName(circuit.inputs[#circuit.inputs-1]), "0")
+    graph:node(uniqueNodeName(circuit.inputs[#circuit.inputs]), "1")
+
+    for i,v in ipairs(circuit.internalNodes) do
+        graph:node(uniqueNodeName(v), string.format("%x", v.lutValue))
+        for j,input in ipairs(v.inputs) do
+            graph:edge(uniqueNodeName(input), uniqueNodeName(v))
+        end
+    end
+
+    for i=1,#circuit.outputs do
+        local v = circuit.outputs[i]
+        graph:node(uniqueNodeName(v), "output"..i-1)
+        for j,input in ipairs(v.inputs) do
+            graph:edge(uniqueNodeName(input), uniqueNodeName(v))
+        end
+    end
+    graph:compile(filename)
 end
