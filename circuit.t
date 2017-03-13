@@ -2,7 +2,8 @@ require("tablehelpers")
 require("util")
 NodeType = {INTERNAL={},INPUT={},OUTPUT={}}
 
-function nodeTypeString(typ)
+local Cir = {}
+function Cir.nodeTypeString(typ)
     if typ == NodeType.INTERNAL then
         return "INTERNAL"
     end
@@ -14,13 +15,13 @@ function nodeTypeString(typ)
     end
 end
 
-function printNode(node)
+function Cir.printNode(node)
     print("BEGIN_NODE")
-    print("  type = "..nodeTypeString(node.type))
+    print("  type = "..Cir.nodeTypeString(node.type))
     if node.inputs and #node.inputs > 0 then
         io.write("  inputs[", tostring(#node.inputs), "] = {")
         for i,input in ipairs(node.inputs) do
-            io.write(nodeTypeString(input.type), ", ")
+            io.write(Cir.nodeTypeString(input.type), ", ")
         end
         io.write("}\n")
     end
@@ -30,17 +31,17 @@ function printNode(node)
     print("END_NODE")
 end
 
-function printGraph(graph)
+function Cir.print(circuit)
     print("inputs")
-    for i,input in ipairs(graph.inputs) do
+    for i,input in ipairs(circuit.inputs) do
         printNode(input)
     end
     print("internal")
-    for i,node in ipairs(graph.internalNodes) do
+    for i,node in ipairs(circuit.internalNodes) do
         printNode(node)
     end
     print("outputs")
-    for i,output in ipairs(graph.outputs) do
+    for i,output in ipairs(circuit.outputs) do
         printNode(output)
     end
 end
@@ -53,7 +54,7 @@ local function Wire(input, output, indexInOut)
     return wire
 end
 
-function getInputWires(node)
+function Cir.getInputWires(node)
     local result = {}
     for i,input in ipairs(node.inputs) do
         log.trace(tostring(node.inputs[i])," -> ",tostring(node))
@@ -62,7 +63,7 @@ function getInputWires(node)
     return result
 end
 
-function visit(node, newNodes)
+local function visit(node, newNodes)
     node.marked = true
     for i,m in ipairs(node.inputs) do
         if m.type == NodeType.INTERNAL and (not m.marked) then
@@ -72,7 +73,7 @@ function visit(node, newNodes)
     newNodes[#newNodes+1] = node
 end
 
-function topologicalSort(nodes)
+local function topologicalSort(nodes)
     
     for i,v in ipairs(nodes) do
         v.marked = false
@@ -92,24 +93,24 @@ function topologicalSort(nodes)
     end
 end
 
-function getWireArray(circuit)
+function Cir.getWireArray(circuit)
     local wires = {}
     for i,output in ipairs(circuit.outputs) do
-        wires = table.concattables(wires, getInputWires(output))
+        wires = table.concattables(wires, Cir.getInputWires(output))
     end
     for i,node in ipairs(circuit.internalNodes) do
-        wires = table.concattables(wires, getInputWires(node))
+        wires = table.concattables(wires, Cir.getInputWires(node))
     end
     log.debug("wireArray size: "..#wires)
     return wires
 end
 
-function makeConsistent(circuit)
-    circuit.wires = getWireArray(circuit)
+function Cir.makeConsistent(circuit)
+    circuit.wires = Cir.getWireArray(circuit)
     topologicalSort(circuit.internalNodes)
 end
 
-function deleteNode(circuit, node)
+function Cir.deleteNode(circuit, node)
     log.trace("deleteNode")
     log.trace("patching inputs")
     for i,wire in ipairs(circuit.wires) do
@@ -122,21 +123,21 @@ function deleteNode(circuit, node)
     log.trace("Actual removal")
     local oldIndex = table.invert(circuit.internalNodes)[node]
     table.remove(circuit.internalNodes, oldIndex)
-    makeConsistent(circuit)
+    Cir.makeConsistent(circuit)
 end
 
-function selectInternalNode(circuit, internalNodeIndex)
+function Cir.selectInternalNode(circuit, internalNodeIndex)
     log.trace("selectInternalNode("..internalNodeIndex..")")
     return circuit.internalNodes[internalNodeIndex]
 end
 
-function nonInputNodeCount(circuit)
+function Cir.nonInputNodeCount(circuit)
     return #circuit.internalNodes + #circuit.outputs
 end
 
 
 --TODO: check if downstream nodes are really downstream?
-function upstreamNodes(circuit, node)
+function Cir.upstreamNodes(circuit, node)
     local upNodes = {}
     for i,v in ipairs(circuit.internalNodes) do
         if node == v then
@@ -150,14 +151,14 @@ function upstreamNodes(circuit, node)
     return upNodes
 end
 
-function setInput(circuit,node,index,inputNode)
+function Cir.setInputOfNode(circuit,node,index,inputNode)
     node.inputs[index] = inputNode
-    log.trace("Setting index "..index.." to node type "..nodeTypeString(inputNode.type))
+    log.trace("Setting index "..index.." to node type "..Cir.nodeTypeString(inputNode.type))
     log.trace("Input set. Making consistent")
-    makeConsistent(circuit)
+    Cir.makeConsistent(circuit)
 end
 
-function selectNonInputNode(circuit, nonInputNodeIndex)
+function Cir.selectNonInputNode(circuit, nonInputNodeIndex)
     log.trace("selectNonInputNode")
     if nonInputNodeIndex > #circuit.internalNodes then
         local i = nonInputNodeIndex - #circuit.internalNodes
@@ -168,15 +169,15 @@ function selectNonInputNode(circuit, nonInputNodeIndex)
     assert(false,"selectNonInputNode index too large")
 end
 
-function wireCount(circuit)
+function Cir.wireCount(circuit)
     return #circuit.wires
 end
 
-function selectWire(circuit, wireIndex)
+function Cir.selectWire(circuit, wireIndex)
     return circuit.wires[wireIndex]
 end
 
-function twoLevelCopyNode(node)
+local function twoLevelCopyNode(node)
     local copiedNode = table.shallowcopy(node)
     if copiedNode.inputs then
         copiedNode.inputs = table.shallowcopy(node.inputs)
@@ -184,7 +185,7 @@ function twoLevelCopyNode(node)
     return copiedNode
 end
 
-function deepCopy(circuit)
+function Cir.deepCopy(circuit)
     log.trace("Deep copy")
     local newCircuit = {}
     newCircuit.inputs = {}
@@ -196,7 +197,7 @@ function deepCopy(circuit)
         newCircuit.inputs[i] = twoLevelCopyNode(circuit.inputs[i])
         if oldToNew[circuit.inputs[i]] then
             log.error("==== DUPLICATE CIRCUIT IN DEEP COPY (INPUTS): "..tostring(oldToNew[circuit.inputs[i]]))
-            toGraphviz(circuit, "out/error")
+            Cir.toGraphviz(circuit, "out/error")
             assert(false)
         end
         oldToNew[circuit.inputs[i]] = newCircuit.inputs[i]
@@ -205,7 +206,7 @@ function deepCopy(circuit)
         newCircuit.outputs[i] = twoLevelCopyNode(circuit.outputs[i])
         if oldToNew[circuit.outputs[i]] then
             log.error("==== DUPLICATE CIRCUIT IN DEEP COPY (OUTPUTS): "..tostring(oldToNew[circuit.outputs[i]]))
-            toGraphviz(circuit, "out/error")
+            Cir.toGraphviz(circuit, "out/error")
             assert(false)
         end
         oldToNew[circuit.outputs[i]] = newCircuit.outputs[i]
@@ -214,7 +215,7 @@ function deepCopy(circuit)
         newCircuit.internalNodes[i] = twoLevelCopyNode(circuit.internalNodes[i])
         if oldToNew[circuit.internalNodes[i]] then
             log.error("==== DUPLICATE CIRCUIT IN DEEP COPY (INTERNAL): "..tostring(oldToNew[circuit.internalNodes[i]]))
-            toGraphviz(circuit, "out/error")
+            Cir.toGraphviz(circuit, "out/error")
             assert(false)
         end
         oldToNew[circuit.internalNodes[i]] = newCircuit.internalNodes[i]
@@ -230,13 +231,13 @@ function deepCopy(circuit)
             end
         end
     end
-    newCircuit.wires = getWireArray(newCircuit)
+    newCircuit.wires = Cir.getWireArray(newCircuit)
     -- Topo sorting is maintained during deep copy
     log.trace("Deep copy done")
     return newCircuit
 end
 
-function internalNodeCount(circuit)
+function Cir.internalNodeCount(circuit)
     return #circuit.internalNodes
 end
 
@@ -267,12 +268,12 @@ local function LUTNode(inputs,lutValue)
     return node
 end
 
-function setLUTValue(node, lutValue)
+function Cir.setLUTValue(node, lutValue)
     assert(node.lutValue, "Tried to assign lut value to non-lut node")
     node.lutValue = lutValue
 end
 
-function nodeSanityCheck(circuit)
+function Cir.nodeSanityCheck(circuit)
     log.debug("NODE SANITY CHECK")
     local validNodes = {}
     for i,v in ipairs(circuit.inputs) do validNodes[v] = true end
@@ -283,18 +284,18 @@ function nodeSanityCheck(circuit)
         if (k.inputs) and #k.inputs > 0 then
             for i,node in ipairs(k.inputs) do
                 if not validNodes[node] then
-                    log.error("INVALID NODE FOUND IN INPUT ", i, " OF ", nodeTypeString(k.type))
-                    log.error("Claims to be ", nodeTypeString(node.type))
+                    log.error("INVALID NODE FOUND IN INPUT ", i, " OF ", Cir.nodeTypeString(k.type))
+                    log.error("Claims to be ", Cir.nodeTypeString(node.type))
                 end
             end
         elseif k.type ~= NodeType.INPUT then
-            log.error("NON-INPUT NODE WITHOUT INPUTS: ", nodeTypeString(k.type))
+            log.error("NON-INPUT NODE WITHOUT INPUTS: ", Cir.nodeTypeString(k.type))
         end
     end
     log.debug("NODE SANITY CHECK DONE")
 end
 
-function isNode(circuit, node)
+local function isNode(circuit, node)
     local validNodes = {}
     for i,v in ipairs(circuit.inputs) do validNodes[v] = true end
     for i,v in ipairs(circuit.outputs) do validNodes[v] = true end
@@ -302,55 +303,55 @@ function isNode(circuit, node)
     return validNodes[node] ~= nil
 end
 
-function addLUTNode(graph, inputs, wire, lutValue)
+function Cir.addLUTNode(circuit, inputs, wire, lutValue)
     for i,v in ipairs(inputs) do
-        log.trace(isNode(graph,v))
+        log.trace(isNode(circuit,v))
     end
-    log.trace(isNode(graph,wire.input))
-    log.trace(isNode(graph,wire.output))
+    log.trace(isNode(circuit,wire.input))
+    log.trace(isNode(circuit,wire.output))
 
     local node = LUTNode(inputs,lutValue)
     wire.output.inputs[wire.indexInOut] = node
     
-    graph.internalNodes[#graph.internalNodes+1] = node
+    circuit.internalNodes[#circuit.internalNodes+1] = node
 
-    makeConsistent(graph)
+    Cir.makeConsistent(circuit)
     log.debug("LUTNODE added")
 end
 
-function ground(circuit)
+function Cir.getGround(circuit)
     return circuit.inputs[#circuit.inputs-1]
 end
 
-function power(circuit)
+function Cir.getPower(circuit)
     return circuit.inputs[#circuit.inputs]
 end
 
-function emptyGraph(inputsCount, outputCount)
-    local graph = {}
-    graph.inputs = {}
+function Cir.emptyCircuit(inputsCount, outputCount)
+    local circuit = {}
+    circuit.inputs = {}
     for i=1,inputsCount do 
-        graph.inputs[i] = InputNode() 
+        circuit.inputs[i] = InputNode() 
     end
     local groundNode = ConstNode(false)
     local powerNode  = ConstNode(true)
-    graph.inputs[inputsCount+1] = groundNode
-    graph.inputs[inputsCount+2] = powerNode
-    graph.outputs = {}
+    circuit.inputs[inputsCount+1] = groundNode
+    circuit.inputs[inputsCount+2] = powerNode
+    circuit.outputs = {}
     for i=1,outputCount do 
-        graph.outputs[i] = OutputNode(groundNode)
+        circuit.outputs[i] = OutputNode(groundNode)
     end
-    graph.internalNodes = {}
-    graph.wires = getWireArray(graph)
-    return graph
+    circuit.internalNodes = {}
+    circuit.wires = Cir.getWireArray(circuit)
+    return circuit
 end
 
 
-function uniqueNodeName(node)
+local function uniqueNodeName(node)
     return "node"..string.sub(tostring(node), 10)
 end
 
-function toGraphviz(circuit, filename)
+function Cir.toGraphviz(circuit, filename)
     local graph = graphviz()
     for i=1,#circuit.inputs-2 do
         graph:node(uniqueNodeName(circuit.inputs[i]), "input"..i-1)
@@ -374,3 +375,5 @@ function toGraphviz(circuit, filename)
     end
     graph:compile(filename)
 end
+
+return Cir
