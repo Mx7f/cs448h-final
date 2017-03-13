@@ -3,7 +3,7 @@ require("bithelpers")
 require("simulation")
 require("util")
 
-function evaluate(circuit, test)
+local function evaluate(circuit, test)
     local out = runCircuit(circuit, test.input)
     return hammingDistance(test.output, out)
 end
@@ -176,7 +176,7 @@ local function createRewrite(currentCircuit, settings)
     assert(false,"Reached what should be probability 0 case in createRewrite() with r = "..r)
 end
 
-function acceptRewrite(rewriteCost, previousCost, settings)
+local function acceptRewrite(rewriteCost, previousCost, settings)
     log.trace("acceptRewrite")
 -- Equation 5: https://raw.githubusercontent.com/StanfordPL/stoke/develop/docs/papers/cacm16.pdf
     local acceptProbability = math.min(1.0, math.exp(-settings.beta*(rewriteCost-previousCost)))

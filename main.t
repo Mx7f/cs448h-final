@@ -15,12 +15,7 @@ TODO: Better LUT value manipulation
 TODO: Faster circuit manipulation
 
 --]]
-require("util")
-require("tablehelpers")
-require("bithelpers")
-require("simulation")
-require("circuit")
-require("stochasticsearch")
+require("stoil")
 
 local fourBitDecoder = emptyGraph(4,3)
 
