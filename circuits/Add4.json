@@ -1,0 +1,838 @@
+{
+   "namespaces": {
+      "_G": {
+         "generators": null,
+         "modules": {
+            "Add4": {
+               "configparams": null,
+               "def": {
+                  "connections": [
+                     [
+                        {
+                           "metadata": null,
+                           "path": [
+                              "self",
+                              [
+                                 "GROUND"
+                              ]
+                           ]
+                        },
+                        {
+                           "metadata": null,
+                           "path": [
+                              "inst0",
+                              [
+                                 "I3"
+                              ]
+                           ]
+                        },
+                        null
+                     ],
+                     [
+                        {
+                           "metadata": null,
+                           "path": [
+                              "inst0",
+                              [
+                                 "I0"
+                              ]
+                           ]
+                        },
+                        {
+                           "metadata": null,
+                           "path": [
+                              "self",
+                              [
+                                 "GROUND"
+                              ]
+                           ]
+                        },
+                        null
+                     ],
+                     [
+                        {
+                           "metadata": null,
+                           "path": [
+                              "inst0",
+                              [
+                                 "I1"
+                              ]
+                           ]
+                        },
+                        {
+                           "metadata": null,
+                           "path": [
+                              "self",
+                              [
+                                 "Add4.I0",
+                                 "0"
+                              ]
+                           ]
+                        },
+                        null
+                     ],
+                     [
+                        {
+                           "metadata": null,
+                           "path": [
+                              "self",
+                              [
+                                 "GROUND"
+                              ]
+                           ]
+                        },
+                        {
+                           "metadata": null,
+                           "path": [
+                              "inst6",
+                              [
+                                 "I0"
+                              ]
+                           ]
+                        },
+                        null
+                     ],
+                     [
+                        {
+                           "metadata": null,
+                           "path": [
+                              "self",
+                              [
+                                 "GROUND"
+                              ]
+                           ]
+                        },
+                        {
+                           "metadata": null,
+                           "path": [
+                              "inst1",
+                              [
+                                 "CI"
+                              ]
+                           ]
+                        },
+                        null
+                     ],
+                     [
+                        {
+                           "metadata": null,
+                           "path": [
+                              "self",
+                              [
+                                 "Add4.I0",
+                                 "3"
+                              ]
+                           ]
+                        },
+                        {
+                           "metadata": null,
+                           "path": [
+                              "inst6",
+                              [
+                                 "I1"
+                              ]
+                           ]
+                        },
+                        null
+                     ],
+                     [
+                        {
+                           "metadata": null,
+                           "path": [
+                              "inst0",
+                              [
+                                 "I2"
+                              ]
+                           ]
+                        },
+                        {
+                           "metadata": null,
+                           "path": [
+                              "self",
+                              [
+                                 "Add4.I1",
+                                 "0"
+                              ]
+                           ]
+                        },
+                        null
+                     ],
+                     [
+                        {
+                           "metadata": null,
+                           "path": [
+                              "self",
+                              [
+                                 "Add4.I0",
+                                 "1"
+                              ]
+                           ]
+                        },
+                        {
+                           "metadata": null,
+                           "path": [
+                              "inst3",
+                              [
+                                 "I0"
+                              ]
+                           ]
+                        },
+                        null
+                     ],
+                     [
+                        {
+                           "metadata": null,
+                           "path": [
+                              "self",
+                              [
+                                 "Add4.I1",
+                                 "2"
+                              ]
+                           ]
+                        },
+                        {
+                           "metadata": null,
+                           "path": [
+                              "inst4",
+                              [
+                                 "I2"
+                              ]
+                           ]
+                        },
+                        null
+                     ],
+                     [
+                        {
+                           "metadata": null,
+                           "path": [
+                              "inst7",
+                              [
+                                 "CI"
+                              ]
+                           ]
+                        },
+                        {
+                           "metadata": null,
+                           "path": [
+                              "inst5",
+                              [
+                                 "CO"
+                              ]
+                           ]
+                        },
+                        null
+                     ],
+                     [
+                        {
+                           "metadata": null,
+                           "path": [
+                              "inst4",
+                              [
+                                 "I3"
+                              ]
+                           ]
+                        },
+                        {
+                           "metadata": null,
+                           "path": [
+                              "inst3",
+                              [
+                                 "CO"
+                              ]
+                           ]
+                        },
+                        null
+                     ],
+                     [
+                        {
+                           "metadata": null,
+                           "path": [
+                              "self",
+                              [
+                                 "GROUND"
+                              ]
+                           ]
+                        },
+                        {
+                           "metadata": null,
+                           "path": [
+                              "inst4",
+                              [
+                                 "I0"
+                              ]
+                           ]
+                        },
+                        null
+                     ],
+                     [
+                        {
+                           "metadata": null,
+                           "path": [
+                              "self",
+                              [
+                                 "Add4.I0",
+                                 "2"
+                              ]
+                           ]
+                        },
+                        {
+                           "metadata": null,
+                           "path": [
+                              "inst4",
+                              [
+                                 "I1"
+                              ]
+                           ]
+                        },
+                        null
+                     ],
+                     [
+                        {
+                           "metadata": null,
+                           "path": [
+                              "self",
+                              [
+                                 "Add4.I0",
+                                 "3"
+                              ]
+                           ]
+                        },
+                        {
+                           "metadata": null,
+                           "path": [
+                              "inst7",
+                              [
+                                 "I0"
+                              ]
+                           ]
+                        },
+                        null
+                     ],
+                     [
+                        {
+                           "metadata": null,
+                           "path": [
+                              "self",
+                              [
+                                 "Add4.I1",
+                                 "1"
+                              ]
+                           ]
+                        },
+                        {
+                           "metadata": null,
+                           "path": [
+                              "inst2",
+                              [
+                                 "I2"
+                              ]
+                           ]
+                        },
+                        null
+                     ],
+                     [
+                        {
+                           "metadata": null,
+                           "path": [
+                              "self",
+                              [
+                                 "Add4.I1",
+                                 "3"
+                              ]
+                           ]
+                        },
+                        {
+                           "metadata": null,
+                           "path": [
+                              "inst7",
+                              [
+                                 "I1"
+                              ]
+                           ]
+                        },
+                        null
+                     ],
+                     [
+                        {
+                           "metadata": null,
+                           "path": [
+                              "inst6",
+                              [
+                                 "I3"
+                              ]
+                           ]
+                        },
+                        {
+                           "metadata": null,
+                           "path": [
+                              "inst5",
+                              [
+                                 "CO"
+                              ]
+                           ]
+                        },
+                        null
+                     ],
+                     [
+                        {
+                           "metadata": null,
+                           "path": [
+                              "self",
+                              [
+                                 "Add4.I0",
+                                 "1"
+                              ]
+                           ]
+                        },
+                        {
+                           "metadata": null,
+                           "path": [
+                              "inst2",
+                              [
+                                 "I1"
+                              ]
+                           ]
+                        },
+                        null
+                     ],
+                     [
+                        {
+                           "metadata": null,
+                           "path": [
+                              "inst2",
+                              [
+                                 "I3"
+                              ]
+                           ]
+                        },
+                        {
+                           "metadata": null,
+                           "path": [
+                              "inst1",
+                              [
+                                 "CO"
+                              ]
+                           ]
+                        },
+                        null
+                     ],
+                     [
+                        {
+                           "metadata": null,
+                           "path": [
+                              "self",
+                              [
+                                 "Add4.I1",
+                                 "3"
+                              ]
+                           ]
+                        },
+                        {
+                           "metadata": null,
+                           "path": [
+                              "inst6",
+                              [
+                                 "I2"
+                              ]
+                           ]
+                        },
+                        null
+                     ],
+                     [
+                        {
+                           "metadata": null,
+                           "path": [
+                              "self",
+                              [
+                                 "GROUND"
+                              ]
+                           ]
+                        },
+                        {
+                           "metadata": null,
+                           "path": [
+                              "inst2",
+                              [
+                                 "I0"
+                              ]
+                           ]
+                        },
+                        null
+                     ],
+                     [
+                        {
+                           "metadata": null,
+                           "path": [
+                              "self",
+                              [
+                                 "Add4.I1",
+                                 "0"
+                              ]
+                           ]
+                        },
+                        {
+                           "metadata": null,
+                           "path": [
+                              "inst1",
+                              [
+                                 "I1"
+                              ]
+                           ]
+                        },
+                        null
+                     ],
+                     [
+                        {
+                           "metadata": null,
+                           "path": [
+                              "self",
+                              [
+                                 "Add4.I1",
+                                 "1"
+                              ]
+                           ]
+                        },
+                        {
+                           "metadata": null,
+                           "path": [
+                              "inst3",
+                              [
+                                 "I1"
+                              ]
+                           ]
+                        },
+                        null
+                     ],
+                     [
+                        {
+                           "metadata": null,
+                           "path": [
+                              "self",
+                              [
+                                 "Add4.I0",
+                                 "0"
+                              ]
+                           ]
+                        },
+                        {
+                           "metadata": null,
+                           "path": [
+                              "inst1",
+                              [
+                                 "I0"
+                              ]
+                           ]
+                        },
+                        null
+                     ],
+                     [
+                        {
+                           "metadata": null,
+                           "path": [
+                              "self",
+                              [
+                                 "Add4.I0",
+                                 "2"
+                              ]
+                           ]
+                        },
+                        {
+                           "metadata": null,
+                           "path": [
+                              "inst5",
+                              [
+                                 "I0"
+                              ]
+                           ]
+                        },
+                        null
+                     ],
+                     [
+                        {
+                           "metadata": null,
+                           "path": [
+                              "inst3",
+                              [
+                                 "CI"
+                              ]
+                           ]
+                        },
+                        {
+                           "metadata": null,
+                           "path": [
+                              "inst1",
+                              [
+                                 "CO"
+                              ]
+                           ]
+                        },
+                        null
+                     ],
+                     [
+                        {
+                           "metadata": null,
+                           "path": [
+                              "inst5",
+                              [
+                                 "CI"
+                              ]
+                           ]
+                        },
+                        {
+                           "metadata": null,
+                           "path": [
+                              "inst3",
+                              [
+                                 "CO"
+                              ]
+                           ]
+                        },
+                        null
+                     ],
+                     [
+                        {
+                           "metadata": null,
+                           "path": [
+                              "self",
+                              [
+                                 "Add4.I1",
+                                 "2"
+                              ]
+                           ]
+                        },
+                        {
+                           "metadata": null,
+                           "path": [
+                              "inst5",
+                              [
+                                 "I1"
+                              ]
+                           ]
+                        },
+                        null
+                     ]
+                  ],
+                  "implementations": null,
+                  "instances": {
+                     "inst0": {
+                        "args": null,
+                        "config": {
+                           "LUT_INIT": 49980
+                        },
+                        "instref": [
+                           "_G",
+                           "SB_LUT4"
+                        ],
+                        "metadata": null
+                     },
+                     "inst1": {
+                        "args": null,
+                        "config": null,
+                        "instref": [
+                           "_G",
+                           "SB_CARRY"
+                        ],
+                        "metadata": null
+                     },
+                     "inst2": {
+                        "args": null,
+                        "config": {
+                           "LUT_INIT": 49980
+                        },
+                        "instref": [
+                           "_G",
+                           "SB_LUT4"
+                        ],
+                        "metadata": null
+                     },
+                     "inst3": {
+                        "args": null,
+                        "config": null,
+                        "instref": [
+                           "_G",
+                           "SB_CARRY"
+                        ],
+                        "metadata": null
+                     },
+                     "inst4": {
+                        "args": null,
+                        "config": {
+                           "LUT_INIT": 49980
+                        },
+                        "instref": [
+                           "_G",
+                           "SB_LUT4"
+                        ],
+                        "metadata": null
+                     },
+                     "inst5": {
+                        "args": null,
+                        "config": null,
+                        "instref": [
+                           "_G",
+                           "SB_CARRY"
+                        ],
+                        "metadata": null
+                     },
+                     "inst6": {
+                        "args": null,
+                        "config": {
+                           "LUT_INIT": 49980
+                        },
+                        "instref": [
+                           "_G",
+                           "SB_LUT4"
+                        ],
+                        "metadata": null
+                     },
+                     "inst7": {
+                        "args": null,
+                        "config": null,
+                        "instref": [
+                           "_G",
+                           "SB_CARRY"
+                        ],
+                        "metadata": null
+                     }
+                  },
+                  "metadata": null
+               },
+               "metadata": null,
+               "type": [
+                  "Record",
+                  [
+                     [
+                        "POWER",
+                        [
+                           "BitIn"
+                        ]
+                     ],
+                     [
+                        "Add4.COUT",
+                        [
+                           "BitOut"
+                        ]
+                     ],
+                     [
+                        "Add4.O",
+                        [
+                           "Array",
+                           4,
+                           [
+                              "BitOut"
+                           ]
+                        ]
+                     ],
+                     [
+                        "Add4.I0",
+                        [
+                           "Array",
+                           4,
+                           [
+                              "BitIn"
+                           ]
+                        ]
+                     ],
+                     [
+                        "Add4.I1",
+                        [
+                           "Array",
+                           4,
+                           [
+                              "BitIn"
+                           ]
+                        ]
+                     ],
+                     [
+                        "GROUND",
+                        [
+                           "BitIn"
+                        ]
+                     ]
+                  ]
+               ]
+            },
+            "SB_CARRY": {
+               "configparams": null,
+               "def": null,
+               "metadata": null,
+               "type": [
+                  "Record",
+                  [
+                     [
+                        "I1",
+                        [
+                           "BitIn"
+                        ]
+                     ],
+                     [
+                        "I0",
+                        [
+                           "BitIn"
+                        ]
+                     ],
+                     [
+                        "CI",
+                        [
+                           "BitIn"
+                        ]
+                     ],
+                     [
+                        "CO",
+                        [
+                           "BitOut"
+                        ]
+                     ]
+                  ]
+               ]
+            },
+            "SB_LUT4": {
+               "configparams": {
+                  "LUT_INIT": "int"
+               },
+               "def": null,
+               "metadata": null,
+               "type": [
+                  "Record",
+                  [
+                     [
+                        "I1",
+                        [
+                           "BitIn"
+                        ]
+                     ],
+                     [
+                        "I0",
+                        [
+                           "BitIn"
+                        ]
+                     ],
+                     [
+                        "I3",
+                        [
+                           "BitIn"
+                        ]
+                     ],
+                     [
+                        "I2",
+                        [
+                           "BitIn"
+                        ]
+                     ],
+                     [
+                        "O",
+                        [
+                           "BitOut"
+                        ]
+                     ]
+                  ]
+               ]
+            }
+         }
+      }
+   },
+   "top": [
+      "_G",
+      "Add4"
+   ]
+}

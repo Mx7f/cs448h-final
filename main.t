@@ -66,14 +66,12 @@ local function getIsInputFromType(typ, port)
         if v[1] == port then
             return getDirectionFromPortType(v[2])=="In"
         end
-        print("v[1] = "..v[1])
     end
     assert(false, "Failed to getIsInputFromType on "..port)
 end
 local function getIsInputFromConnectEnd(connectEnd, modules, currModule)
     if connectEnd.loc == "self" then
         local isInput = getIsInputFromType(currModule.type, connectEnd.port)
-        print("self."..connectEnd.port.." is input? "..tostring(isInput))
         return not isInput -- Invert since internally inputs become outputs
     else
         local instance = currModule.def.instances[connectEnd.loc]
@@ -155,19 +153,22 @@ for k,v in pairs(modules) do
 
             local toNode = {}
             local fromNode = {}
+            local toPortName = toEnd.port
+            if toEnd.index then
+                toPortName = toEnd.port.."["..toEnd.index.."]"
+            end
+            local fromPortName = fromEnd.port
+            if fromEnd.index then
+                fromPortName = fromEnd.port.."["..fromEnd.index.."]"
+            end
+
             local indexInToNode = 1
             if toEnd.loc == "self" then
-                local toPortName = toEnd.port
-                if toEnd.index then
-                    toPortName = toEnd.port.."["..toEnd.index.."]"
-                end
-                print("toPortName: "..toPortName)
                 local toIndex = table.indexOf(outputs, toPortName)
                 assert(toIndex > 0, "Invalid input "..toEnd.port)
                 toNode = loadedCircuit.outputs[toIndex]
             else
                 toNode = gates[toEnd.loc]
-                print("indexInOut = nameToIndex["..toEnd.port.."]")
                 indexInToNode = nameToIndex[toEnd.port]
             end
             if fromEnd.loc == "self" then
@@ -177,11 +178,6 @@ for k,v in pairs(modules) do
                     fromNode = loadedCircuit.inputs[#loadedCircuit.inputs]
                 else
                     --inputPort = getPort(inputPort)
-                    local fromPortName = fromEnd.port
-                    if fromEnd.index then
-                        fromPortName = fromEnd.port.."["..fromEnd.index.."]"
-                    end
-                    print("fromPortName: "..fromPortName)
 
                     local fromIndex = table.indexOf(inputs, fromPortName)
                     fromNode = loadedCircuit.inputs[fromIndex]
@@ -189,10 +185,7 @@ for k,v in pairs(modules) do
             else
                 fromNode = gates[fromEnd.loc]
             end
-            print("Setting input of node: ")
-            print(fromNode)
-            print(indexInToNode)
-            print(toNode)
+            print("wire("..fromEnd.loc.."."..fromPortName..", "..toEnd.loc.."."..toPortName..")")
             circuit.setInputOfNode(loadedCircuit,toNode,indexInToNode,fromNode)
         end
     end

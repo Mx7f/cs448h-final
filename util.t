@@ -11,4 +11,4 @@ function readAll(file)
 end
 
 
-log.level = "trace"
+log.level = "error"
