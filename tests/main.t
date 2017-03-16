@@ -35,7 +35,6 @@ TestJDecoders = {}
         for i,v in ipairs(testInputs) do
             lu.assertEquals(stoil.runCircuit(fourBitDecoder,v), i-1)
         end
-        
     end
 
 os.exit( lu.LuaUnit.run() )

@@ -317,6 +317,7 @@ function Cir.addLUTNode(circuit, inputs, wire, lutValue)
 
     Cir.makeConsistent(circuit)
     log.debug("LUTNODE added")
+    return node
 end
 
 function Cir.getGround(circuit)

@@ -35,3 +35,12 @@ function table.shallowcopy(orig)
     end
     return copy
 end
+
+function table.indexOf(t, val)
+  for i,v in ipairs(t) do
+    if v == val then
+      return i
+    end
+  end
+  return -1
+end

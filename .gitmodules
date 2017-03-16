@@ -7,3 +7,6 @@
 [submodule "luaunit"]
 	path = luaunit
 	url = https://github.com/bluebird75/luaunit.git
+[submodule "json.lua"]
+	path = json
+	url = https://github.com/rxi/json.lua
