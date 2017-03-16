@@ -24,21 +24,6 @@ local fourBitDecoder,testInputs = jdecoders.fourBit()
 local tests = stoil.createTestSuite(fourBitDecoder, testInputs)
 
 
-local searchSettings = {
-    addMass = 1,
-    deleteMass = 1,
-    inputSwapMass = 1,
-    lutChangeMass = 1,
-    totalIterations = 200000,
-    iterationsBetweenRestarts = 200000,
-    maxInternalNodes = 6,
-    minInternalNodes = 0,
-    beta = 1.0,
-    weightCorrect = 3.0,
-    weightCritical = 1.0,
-    weightSize = 1.0
-}
-print("Before search")
 --for i=1,3 do setLUTValue(fourBitDecoder.internalNodes[i], 0) end
 
 local jsonCircuit = json.decode(readAll("circuits/Add4.json"))
@@ -214,14 +199,40 @@ for k,v in pairs(modules) do
     end
 end
 circuit.toGraphviz(loadedCircuit, "testLoad")
-assert(false)
 
 
-for i=1,3 do circuit.deleteNode(fourBitDecoder, fourBitDecoder.internalNodes[1]) end
+local testInputs = {}
+for i=1,255 do
+    testInputs[#testInputs+1] = i
+end
+
+local tests = stoil.createTestSuite(loadedCircuit, testInputs)
+for k,v in pairs(tests) do 
+    print(v.input) 
+    print(v.output)
+end
+
+local searchSettings = {
+    addMass = 1,
+    deleteMass = 1,
+    inputSwapMass = 1,
+    lutChangeMass = 1,
+    totalIterations = 10000,
+    iterationsBetweenRestarts = 10000,
+    maxInternalNodes = 20,
+    minInternalNodes = 0,
+    beta = 1.0,
+    weightCorrect = 1.0,
+    weightCritical = 1.0,
+    weightSize = 0.0
+}
+print("Before search")
+
+
+--for i=1,3 do circuit.deleteNode(fourBitDecoder, fourBitDecoder.internalNodes[1]) end
 for i=1,10 do 
     print(searchSettings)
-    print(fourBitDecoder)
-    local bestCircuit, bestCost, improved, correctCircuits = stoil.search(fourBitDecoder, tests, {}, searchSettings)
+    local bestCircuit, bestCost, improved, correctCircuits = stoil.search(loadedCircuit, tests, {}, searchSettings)
     print("Best Cost: "..bestCost)
     circuit.toGraphviz(bestCircuit, "out/final"..i)
 end

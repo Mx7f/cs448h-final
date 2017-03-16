@@ -16,7 +16,7 @@ local function evalLUT(node)
             index = setbit(index, bit(i))
         end
     end
-    return hasbit(node.lutValue, bit(index))
+    return hasbit(node.lutValue, bit(index+1))
 end
 
 function sim.runCircuit(circuit, input)
