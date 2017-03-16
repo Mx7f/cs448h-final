@@ -72,7 +72,7 @@ end
 local function getIsInputFromConnectEnd(connectEnd, modules, currModule)
     if connectEnd.loc == "self" then
         local isInput = getIsInputFromType(currModule.type, connectEnd.port)
-        return not isInput -- Invert since internally inputs become outputs
+        return isInput
     else
         local instance = currModule.def.instances[connectEnd.loc]
         --print(instance)
@@ -83,6 +83,23 @@ local function getIsInputFromConnectEnd(connectEnd, modules, currModule)
     end
 end
 
+
+function alphabetic_order_carry_last(name1, name2)
+    local n1 = name1
+    local n2 = name2
+    for i=1,string.len(name1) do
+        if name1:sub(i,i) == "C" then
+            n1 = "Z"..n1
+        end
+    end
+    for i=1,string.len(name2) do
+        if name2:sub(i,i) == "C" then
+            n2 = "Z"..n2
+        end
+    end
+    return n1<n2
+end
+
 loadedCircuit = {}
 local modules = jsonCircuit.namespaces._G.modules
 for k,v in pairs(modules) do
@@ -91,22 +108,23 @@ for k,v in pairs(modules) do
         local outputs = {}
         local interface = v.type[2]
         for i,port in ipairs(interface) do
-            local name = port[1]
-            local typ = port[2]
+            local name  = port[1]
+            local typ   = port[2]
             if name ~= "POWER" and name ~= "GROUND" then
+                -- Reverse direction
                 if typ[1] == "BitIn" then
-                    inputs[#inputs + 1] = name
-                elseif typ[1] == "BitOut" then
                     outputs[#outputs + 1] = name
+                elseif typ[1] == "BitOut" then
+                    inputs[#inputs + 1] = name
                 else
                     assert(typ[1] == "Array")
                     if typ[3][1] == "BitIn" then
                         for j=1,typ[2] do
-                            inputs[#inputs + 1] = name.."["..tostring(j-1).."]"
+                            outputs[#outputs + 1] = name.."["..tostring(j-1).."]"
                         end
                     elseif typ[3][1] == "BitOut" then
                         for j=1,typ[2] do
-                            outputs[#outputs + 1] = name.."["..tostring(j-1).."]"
+                            inputs[#inputs + 1] = name.."["..tostring(j-1).."]"
                         end
                     else
                         assert(false)
@@ -114,6 +132,8 @@ for k,v in pairs(modules) do
                 end
             end
         end
+        table.sort(outputs, alphabetic_order_carry_last)
+        table.sort(inputs, alphabetic_order_carry_last)
         inputs[#inputs + 1] = "GROUND"
         inputs[#inputs + 1] = "POWER"
         for i=1,#inputs do
@@ -142,7 +162,7 @@ for k,v in pairs(modules) do
             -- {loc, port, index}
             local isInput1 = getIsInputFromConnectEnd(conn[1],modules,v)
             local isInput2 = getIsInputFromConnectEnd(conn[2],modules,v)
-            assert(isInput1~=isInput2, "Erroneous connection from input "..tostring(isInput1).."to input "..tostring(isInput2))
+            assert(isInput1~=isInput2, "Erroneous connection from input "..conn[1].loc.." "..conn[1].port.."to input "..conn[2].loc.." "..conn[2].port)
             local fromEnd = conn[1]
             local toEnd = conn[2]
             if isInput1 then
@@ -186,6 +206,9 @@ for k,v in pairs(modules) do
                 fromNode = gates[fromEnd.loc]
             end
             print("wire("..fromEnd.loc.."."..fromPortName..", "..toEnd.loc.."."..toPortName..")")
+            print(toNode)
+            print(indexInToNode)
+            print(fromNode)
             circuit.setInputOfNode(loadedCircuit,toNode,indexInToNode,fromNode)
         end
     end
