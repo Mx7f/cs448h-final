@@ -352,6 +352,95 @@ local function uniqueNodeName(node)
     return "node"..string.sub(tostring(node), 10)
 end
 
+
+local struct InputNode {
+    val : uint32
+}
+
+local struct OutputNode {
+    inputIndex : int32
+}
+
+local struct LUTNode {
+    inputs      : int32[4]
+    lutValue    : uint32
+    val         : uint32
+}
+
+makeTerraCircuit = terralib.memoize(function(numInputs, numOutputs)
+    local struct TerraCircuit {
+        inputs  : InputNode[numInputs]
+        luts : BoundedArray(LUTNode, 20) -- TODO:Abstract
+        outputs : OutputNode[numOutputs]
+    }
+    terra TerraCircuit:simulate()
+        for i=0,self.luts.N do
+            var bitindex = 0
+            for j=0,4 do
+                var nodeindex = self.luts.data[i].inputs[j]
+                if nodeindex < [numInputs] then
+                    bitindex = bitindex or (self.inputs[nodeindex].val << j)
+                else
+                    nodeindex = nodeindex - [numInputs]
+                    bitindex = bitindex or (self.luts.data[nodeindex].val << j)
+                end
+            end
+            self.luts.data[i].val = 1 and (self.luts.data[i].lutValue >> bitindex)
+        end
+        var result : uint32 = 0 --TODO: get rid of 32-bit limitation
+        for i=0,numOutputs do
+            var nodeindex = self.outputs[i].inputIndex
+            if nodeindex < [uint32]([numInputs]) then
+                result = result or (self.inputs[nodeindex].val << i)
+            else
+                nodeindex = nodeindex - [int32]([numInputs])
+                result = result or (self.luts.data[nodeindex].val << i)
+            end
+        end
+        return result
+    end
+    return TerraCircuit
+end)
+
+function Cir.runCircuitInTerra(circuit, input)
+    local nodesToIndices = {}
+    for i,v in ipairs(circuit.inputs) do
+        nodesToIndices[v] = i-1
+    end
+    for i,v in ipairs(circuit.internalNodes) do
+        nodesToIndices[v] = i-1+(#circuit.inputs)
+    end
+    local terra runCircuit()
+        var circ : makeTerraCircuit(#circuit.inputs, #circuit.outputs)
+        var inp : uint64 = [input]
+        circ.luts:resize([#circuit.internalNodes])
+        escape 
+            for i,v in ipairs(circuit.internalNodes) do
+                for j=0,3 do
+                    local nodeIndex = nodesToIndices[v.inputs[j+1]]
+                    emit quote 
+                        circ.luts([i-1]).inputs[j] = [int32](nodeIndex)
+                    end
+                end
+                emit quote 
+                    circ.luts([i-1]).lutValue = uint32(v.lutValue)
+                end
+            end
+            for i,v in ipairs(circuit.outputs) do
+                local nodeIndex = nodesToIndices[v.inputs[1]]
+                emit quote 
+                    circ.outputs[i-1].inputIndex = [int32](nodeIndex)
+                end
+            end
+        end
+        for i=0,[#circuit.inputs] do
+            circ.inputs[i].val = [uint32]((inp >> i) and 1)
+        end
+        return circ:simulate()
+    end
+    return runCircuit()
+end
+
 function Cir.toGraphviz(circuit, filename)
     local graph = graphviz()
     for i=1,#circuit.inputs-2 do

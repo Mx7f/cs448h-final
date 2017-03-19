@@ -4,6 +4,24 @@ local cc = require("circuit")
 local sim = require("simulation")
 
 local ss = {}
+
+ss.defaultSearchSettings = {
+    addMass = 1,
+    deleteMass = 1,
+    inputSwapMass = 1,
+    lutChangeMass = 1,
+    totalIterations = 10000000,
+    iterationsBetweenRestarts = 1000000,
+    maxInternalNodes = 100,
+    minInternalNodes = 0,
+    beta = 1.0,
+    weightCorrect = 1.0,
+    weightCritical = 1.0,
+    weightSize = 1.0
+}
+
+
+
 local function evaluate(circuit, test)
     local out = sim.runCircuit(circuit, test.input)
     return hammingDistance(test.output, out)
@@ -223,9 +241,9 @@ function ss.stochasticSearch(initialCircuit, testSet, validationSet, settings)
             if currentCorrectCost == 0 and currentCost < bestCost then
                 print("======================= NEW BEST CIRCUIT "..i.." =========================")
                 print("Cost: "..currentCost)
-                if log.level == "debug" or log.level == "trace" then
+                --if log.level == "debug" or log.level == "trace" then
                     cc.toGraphviz(currentCircuit, "out/correct"..(#correctCircuits + 1))
-                end
+                --end
                 correctCircuits[#correctCircuits + 1] = currentCircuit
                 bestCost = currentCost
                 bestCircuit = currentCircuit

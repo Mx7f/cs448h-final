@@ -38,14 +38,43 @@ function sim.runCircuit(circuit, input)
     return output
 end
 
-function sim.createTestSuite(circuit, inputs)
+function sim.createTestSuite(func, inputs)
     local tests = {}
     for i=1,#inputs do
         local test = {}
         test.input = inputs[i]
-        test.output = sim.runCircuit(circuit,test.input)
+        test.output = func(test.input)
         tests[i] = test
     end
     return tests
 end
+
+function sim.wrapCircuit(circuit)
+    local function curriedSimulate(inp)
+        return sim.runCircuit(circuit, inp)
+    end
+    return curriedSimulate 
+end
+
+function sim.testAndValidationSet(func, testSettings)
+    local validationInputs = {}
+    if testSettings.validationCount < 0 then
+        for i=testSettings.inputMin,testSettings.inputMax do
+            validationInputs[#validationInputs+1] = i
+        end
+    else
+        for i=1,testSettings.validationCount do
+            validationInputs[#validationInputs+1] = math.random(testSettings.inputMax-testSettings.inputMin + 1)-1-testSettings.inputMin
+        end
+    end
+    local testInputs = {}
+    for i=1,testSettings.testCount do
+        testInputs[#testInputs+1] = math.random(testSettings.inputMax-testSettings.inputMin + 1)-1-testSettings.inputMin
+    end
+
+    local tests         = stoil.createTestSuite(func, testInputs)
+    local validation    = stoil.createTestSuite(func, validationInputs)
+    return tests, validation
+end
+
 return sim
