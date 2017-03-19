@@ -43,6 +43,8 @@ print("Lua simulate "..tostring(errorCost))
 
 local tCircuitGen,tCircuitType = circuit.createTerraCircuit(loadedCircuit)
 local tCirc = tCircuitGen()
+loadedCircuit = Cir.terraCircuitToLuaCircuit(tCirc)
+circuit.toGraphviz(loadedCircuit, "roundtrip")
 local tSet = circuit.createTerraTestSet(validation)
 errorCost = 0
 time = os.clock()

@@ -443,6 +443,47 @@ makeTerraCircuit = terralib.memoize(function(numInputs, numOutputs)
     return TerraCircuit
 end)
 
+function Cir.terraCircuitToLuaCircuit(terraCircuit)
+    local inputCount = terraCircuit.inputs:gettype().N-2
+    local outputCount =terraCircuit.outputs:gettype().N
+    local luaCircuit = emptyCircuit(inputCount, outputCount)
+    local internalNodeCount = terraCircuit.luts.N
+    for i=1,internalNodeCount do
+        local lutValue = terraCircuit.luts(i-1).lutValue
+        local inputs = {}
+        for j=0,3 do
+            local index = terraCircuit.luts(i-1).inputs[j]
+            index = index + 1
+            if index <= #luaCircuit.inputs
+                inputs[#inputs+1] = luaCircuit.inputs[index]
+            else
+                index = index - #luaCircuit.inputs
+                inputs[#inputs+1] = luaCircuit.internalNodes[index]
+            end
+        end
+        local newNode = LUTNode(inputs,lutValue)
+        luaCircuit.internalNodes[#luaCircuit.internalNodes+1] = newNode
+    end
+    for i=1,outputCount do
+        local index = terraCircuit.outputs[i-1].inputIndex
+        index = index + 1
+        if index <= #luaCircuit.inputs
+            luaCircuit.outputs[i].inputs[1] = luaCircuit.inputs[index]
+        else
+            index = index - #luaCircuit.inputs
+            luaCircuit.outputs[i].inputs[1] = luaCircuit.internalNodes[index]
+        end
+         = 
+    end
+    Cir.makeConsistent(luaCircuit)
+        
+    wire.output.inputs[wire.indexInOut] = node
+    
+    circuit.internalNodes[#circuit.internalNodes+1] = node
+
+    Cir.makeConsistent(circuit)
+end
+
 function Cir.createTerraCircuit(circuit)
     local nodesToIndices = {}
     for i,v in ipairs(circuit.inputs) do
