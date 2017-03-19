@@ -23,22 +23,40 @@ local circuit = stoil.circuit
 local loadedCircuit = coreir.load("circuits/Add4.json")
 local testSettings = {
     inputMin = 0,
-    inputMax = 255,
+    inputMax = math.pow(2,8)-1,
     testCount = 16,
     validationCount = -1 -- If negative, use full range of inputs to generate validation
 }
 local tests, validation = stoil.testAndValidationSet(stoil.wrapCircuit(loadedCircuit), testSettings)
 
-for k,v in pairs(validation) do 
-    print(v.input) 
-    print(v.output)
+
+local time = os.clock()
+local errorCost = 0
+for i=0,10000 do
+    for _,test in ipairs(validation) do
+        errorCost = errorCost + hammingDistance(test.output, stoil.runCircuit(loadedCircuit, test.input))
+    end
 end
+print(string.format("elapsed time: %.5f", os.clock() - time))
+print("Lua simulate "..tostring(errorCost))
+
+
+local tCircuitGen,tCircuitType = circuit.createTerraCircuit(loadedCircuit)
+local tCirc = tCircuitGen()
+local tSet = circuit.createTerraTestSet(validation)
+errorCost = 0
+time = os.clock()
+for i=0,10000 do
+    errorCost = errorCost + tCirc:hammingErrorOnTestSet(tSet)
+end
+print(string.format("elapsed time: %.5f", os.clock() - time))
+print("Terra simulate "..tostring(errorCost))
 
 local searchSettings = stoil.defaultSearchSettings
 searchSettings.maxInternalNodes = 20
 searchSettings.weightSize = 0.01
 
-print(circuit.runCircuitInTerra(loadedCircuit,17))
+
 
 print("Before search")
 

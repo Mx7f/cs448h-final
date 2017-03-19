@@ -352,6 +352,24 @@ local function uniqueNodeName(node)
     return "node"..string.sub(tostring(node), 10)
 end
 
+local struct TestSet {
+    inputs : &uint64
+    outputs : &uint64
+    N : uint64
+}
+terra TestSet:set(idx : uint64, inp : uint64, out : uint64)
+    self.inputs[idx]    = inp
+    self.outputs[idx]   = out
+end
+terra TestSet:init(size : uint64)
+    self.N = size
+    self.inputs = [&uint64](C.malloc(sizeof(uint64) * size))
+    self.outputs = [&uint64](C.malloc(sizeof(uint64) * size))
+end
+terra TestSet:free()
+    C.free(self.inputs)
+    C.free(self.outputs)
+end
 
 local struct InputNode {
     val : uint32
@@ -374,6 +392,7 @@ makeTerraCircuit = terralib.memoize(function(numInputs, numOutputs)
         outputs : OutputNode[numOutputs]
     }
     terra TerraCircuit:simulate()
+        --C.printf("self.luts.N, %u\n", self.luts.N)
         for i=0,self.luts.N do
             var bitindex = 0
             for j=0,4 do
@@ -387,6 +406,7 @@ makeTerraCircuit = terralib.memoize(function(numInputs, numOutputs)
             end
             self.luts.data[i].val = 1 and (self.luts.data[i].lutValue >> bitindex)
         end
+        --C.printf("numOutputs, %u\n", numOutputs)
         var result : uint32 = 0 --TODO: get rid of 32-bit limitation
         for i=0,numOutputs do
             var nodeindex = self.outputs[i].inputIndex
@@ -399,10 +419,31 @@ makeTerraCircuit = terralib.memoize(function(numInputs, numOutputs)
         end
         return result
     end
+    terra TerraCircuit:setInputs(inp : uint64)
+        for i=0,numInputs do
+            self.inputs[i].val = [uint32]((inp >> i) and 1)
+        end
+    end
+    terra TerraCircuit:hammingDist(inp : uint64, out : uint64)
+        --C.printf("About to set Inputs\n")
+        self:setInputs(inp)
+        --C.printf("About to simulate\n")
+        var result = self:simulate()
+        --C.printf("About to popcount\n")
+        return popcount(result ^ out)
+    end
+    terra TerraCircuit:hammingErrorOnTestSet(testSet : TestSet)
+        var dist : int32 = 0
+        for i=0,testSet.N do
+            dist = dist + self:hammingDist(testSet.inputs[i], testSet.outputs[i])
+        end
+        return dist
+    end
+
     return TerraCircuit
 end)
 
-function Cir.runCircuitInTerra(circuit, input)
+function Cir.createTerraCircuit(circuit)
     local nodesToIndices = {}
     for i,v in ipairs(circuit.inputs) do
         nodesToIndices[v] = i-1
@@ -410,9 +451,9 @@ function Cir.runCircuitInTerra(circuit, input)
     for i,v in ipairs(circuit.internalNodes) do
         nodesToIndices[v] = i-1+(#circuit.inputs)
     end
-    local terra runCircuit()
-        var circ : makeTerraCircuit(#circuit.inputs, #circuit.outputs)
-        var inp : uint64 = [input]
+    local tCircType = makeTerraCircuit(#circuit.inputs, #circuit.outputs)
+    local terra createCircuit()
+        var circ : tCircType
         circ.luts:resize([#circuit.internalNodes])
         escape 
             for i,v in ipairs(circuit.internalNodes) do
@@ -422,23 +463,71 @@ function Cir.runCircuitInTerra(circuit, input)
                         circ.luts([i-1]).inputs[j] = [int32](nodeIndex)
                     end
                 end
-                emit quote 
+                emit quote
                     circ.luts([i-1]).lutValue = uint32(v.lutValue)
                 end
             end
             for i,v in ipairs(circuit.outputs) do
                 local nodeIndex = nodesToIndices[v.inputs[1]]
-                emit quote 
+                emit quote
                     circ.outputs[i-1].inputIndex = [int32](nodeIndex)
                 end
             end
         end
-        for i=0,[#circuit.inputs] do
-            circ.inputs[i].val = [uint32]((inp >> i) and 1)
-        end
+        return circ
+    end
+    return createCircuit, tCircType
+end
+--[[
+function Cir.runCircuitInTerra(circuit, input)
+    local terra runCircuit()
+        var circ = [createTerraCircuit(circuit)()]
+        circ:setInputs([input])
         return circ:simulate()
     end
     return runCircuit()
+end
+--]]
+
+
+local function runCreatedCircuitInTerra(terraCircuit, input)
+    local terra runCircuit()
+        var circ = [terraCircuit]
+        var inp : uint64 = [input]
+        circ:setInputs([input])
+        return circ:simulate()
+    end
+    return runCircuit()
+end
+
+function Cir.createTerraTestSet(testSet)
+    local terra createTestSet()
+        var tSet : TestSet
+        tSet:init([#testSet])
+        return tSet
+    end
+    local tSet = createTestSet()
+    for i,v in ipairs(testSet) do
+        tSet:set(i-1, v.input, v.output)
+    end
+    return tSet
+end
+
+function Cir.hammingDistanceOnTestSetTerra(circuit, testSet)
+    local hammingDist = 0
+    local tCirc,TerraCircuitType  = Cir.createTerraCircuit(circuit)
+    local terraTestSet = Cir.createTerraTestSet(testSet)
+    local terra hammingDistOnTest()
+        var terraCircuit = tCirc()
+        var tSet : TestSet = terraTestSet
+        var result = terraCircuit:hammingErrorOnTestSet(tSet)
+        tSet:free()
+        return result
+    end
+    print("Before terra compilation")
+    local hammingDist = hammingDistOnTest()
+    print("Hamming dist "..hammingDist)
+    return hammingDist
 end
 
 function Cir.toGraphviz(circuit, filename)

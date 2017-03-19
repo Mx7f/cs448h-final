@@ -1,7 +1,20 @@
---[[ Adapted from http://ricilake.blogspot.com/2007/10/iterating-bits-in-lua.html 
+--[[ 
+
+  Lua versions Adapted from http://ricilake.blogspot.com/2007/10/iterating-bits-in-lua.html 
 	These are highly inefficient and should only be used for prototyping
+  
+  Terra versions handrolled. Would prefer to use intrinsics
 
 --]]
+
+terra popcount(x : uint64) : int32 
+  var v : int32 = 0
+  while(x ~= 0) do
+    x = x and (x - 1)
+    v = v + 1
+  end
+  return v;
+end
 
 function bit(p)
   return 2 ^ (p - 1)  -- 1-based indexing
@@ -35,8 +48,6 @@ function hammingDistance(x,y)
   until p < 1
   return dist
 end
-
-
 
 function setBits(bits)
     local result = 0
