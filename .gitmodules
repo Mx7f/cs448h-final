@@ -10,3 +10,6 @@
 [submodule "json.lua"]
 	path = json
 	url = https://github.com/rxi/json.lua
+[submodule "mersenne-twister"]
+	path = mersenne-twister
+	url = https://github.com/cslarsen/mersenne-twister.git

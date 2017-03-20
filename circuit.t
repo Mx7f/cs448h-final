@@ -371,25 +371,27 @@ terra TestSet:free()
     C.free(self.outputs)
 end
 
-local struct InputNode {
+Cir.TestSet = TestSet
+
+local struct TerraInputNode {
     val : uint32
 }
 
-local struct OutputNode {
+local struct TerraOutputNode {
     inputIndex : int32
 }
 
-local struct LUTNode {
+local struct TerraLUTNode {
     inputs      : int32[4]
     lutValue    : uint32
     val         : uint32
 }
 
-makeTerraCircuit = terralib.memoize(function(numInputs, numOutputs)
+local makeTerraCircuit = terralib.memoize(function(numInputs, numOutputs)
     local struct TerraCircuit {
-        inputs  : InputNode[numInputs]
-        luts : BoundedArray(LUTNode, 20) -- TODO:Abstract
-        outputs : OutputNode[numOutputs]
+        inputs  : TerraInputNode[numInputs]
+        luts : BoundedArray(TerraLUTNode, 20) -- TODO:Abstract
+        outputs : TerraOutputNode[numOutputs]
     }
     terra TerraCircuit:simulate()
         --C.printf("self.luts.N, %u\n", self.luts.N)
@@ -434,9 +436,11 @@ makeTerraCircuit = terralib.memoize(function(numInputs, numOutputs)
     end
     terra TerraCircuit:hammingErrorOnTestSet(testSet : TestSet)
         var dist : int32 = 0
+        --C.printf("hammingErrorOnTestSet: size(%d)\n",testSet.N)
         for i=0,testSet.N do
             dist = dist + self:hammingDist(testSet.inputs[i], testSet.outputs[i])
         end
+        --C.printf("error %d\n",dist)
         return dist
     end
 
@@ -444,17 +448,17 @@ makeTerraCircuit = terralib.memoize(function(numInputs, numOutputs)
 end)
 
 function Cir.terraCircuitToLuaCircuit(terraCircuit)
-    local inputCount = terraCircuit.inputs:gettype().N-2
-    local outputCount =terraCircuit.outputs:gettype().N
-    local luaCircuit = emptyCircuit(inputCount, outputCount)
+    local inputCount = terralib.typeof(terraCircuit.inputs).N-2
+    local outputCount = terralib.typeof(terraCircuit.outputs).N
+    local luaCircuit = Cir.emptyCircuit(inputCount, outputCount)
     local internalNodeCount = terraCircuit.luts.N
     for i=1,internalNodeCount do
-        local lutValue = terraCircuit.luts(i-1).lutValue
+        local lutValue = terraCircuit.luts.data[i-1].lutValue
         local inputs = {}
         for j=0,3 do
-            local index = terraCircuit.luts(i-1).inputs[j]
+            local index = terraCircuit.luts.data[i-1].inputs[j]
             index = index + 1
-            if index <= #luaCircuit.inputs
+            if index <= #luaCircuit.inputs then
                 inputs[#inputs+1] = luaCircuit.inputs[index]
             else
                 index = index - #luaCircuit.inputs
@@ -467,21 +471,15 @@ function Cir.terraCircuitToLuaCircuit(terraCircuit)
     for i=1,outputCount do
         local index = terraCircuit.outputs[i-1].inputIndex
         index = index + 1
-        if index <= #luaCircuit.inputs
+        if index <= #luaCircuit.inputs then
             luaCircuit.outputs[i].inputs[1] = luaCircuit.inputs[index]
         else
             index = index - #luaCircuit.inputs
             luaCircuit.outputs[i].inputs[1] = luaCircuit.internalNodes[index]
         end
-         = 
     end
     Cir.makeConsistent(luaCircuit)
-        
-    wire.output.inputs[wire.indexInOut] = node
-    
-    circuit.internalNodes[#circuit.internalNodes+1] = node
-
-    Cir.makeConsistent(circuit)
+    return luaCircuit
 end
 
 function Cir.createTerraCircuit(circuit)

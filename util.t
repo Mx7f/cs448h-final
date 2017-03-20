@@ -13,7 +13,36 @@ end
 C = terralib.includecstring [[
     #include <stdio.h>
     #include <stdlib.h>
+    #include <math.h>
+
+// *Really* minimal PCG32 code / (c) 2014 M.E. O'Neill / pcg-random.org
+// Licensed under Apache License 2.0 (NO WARRANTY, etc. see website)
+
+typedef struct { uint64_t state;  uint64_t inc; } pcg32_random_t;
+
+uint32_t pcg32_random_r(pcg32_random_t* rng)
+{
+    uint64_t oldstate = rng->state;
+    // Advance internal state
+    rng->state = oldstate * 6364136223846793005ULL + (rng->inc|1);
+    // Calculate output function (XSH RR), uses old state for max ILP
+    uint32_t xorshifted = ((oldstate >> 18u) ^ oldstate) >> 27u;
+    uint32_t rot = oldstate >> 59u;
+    return (xorshifted >> rot) | (xorshifted << ((-rot) & 31));
+}
+
 ]]
+
+terra random01(rng : &C.pcg32_random_t) : double
+    var randu32 = C.pcg32_random_r(rng)
+    -- Divide by range
+    return [double](randu32) / [double](4294967295.0)
+end
+
+terra randomu32(rng : &C.pcg32_random_t) : uint32
+    return C.pcg32_random_r(rng)
+end
+
 local arraytypes = {}
 BoundedArray = terralib.memoize(function(typ,maxSize)
     maxSize = assert(tonumber(maxSize),"expected a number")

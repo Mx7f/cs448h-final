@@ -32,7 +32,7 @@ local tests, validation = stoil.testAndValidationSet(stoil.wrapCircuit(loadedCir
 
 local time = os.clock()
 local errorCost = 0
-for i=0,10000 do
+for i=0,100 do
     for _,test in ipairs(validation) do
         errorCost = errorCost + hammingDistance(test.output, stoil.runCircuit(loadedCircuit, test.input))
     end
@@ -43,12 +43,12 @@ print("Lua simulate "..tostring(errorCost))
 
 local tCircuitGen,tCircuitType = circuit.createTerraCircuit(loadedCircuit)
 local tCirc = tCircuitGen()
-loadedCircuit = Cir.terraCircuitToLuaCircuit(tCirc)
+loadedCircuit = circuit.terraCircuitToLuaCircuit(tCirc)
 circuit.toGraphviz(loadedCircuit, "roundtrip")
 local tSet = circuit.createTerraTestSet(validation)
 errorCost = 0
 time = os.clock()
-for i=0,10000 do
+for i=0,100 do
     errorCost = errorCost + tCirc:hammingErrorOnTestSet(tSet)
 end
 print(string.format("elapsed time: %.5f", os.clock() - time))
@@ -65,9 +65,10 @@ print("Before search")
 --for i=1,3 do circuit.deleteNode(fourBitDecoder, fourBitDecoder.internalNodes[1]) end
 for i=1,10 do 
     local x = os.clock()
-    local bestCircuit, bestCost, improved, correctCircuits = stoil.search(loadedCircuit, tests, validation, searchSettings)
+    --local bestCircuit, bestCost, improved, correctCircuits = stoil.search(loadedCircuit, tests, validation, searchSettings)
+    local bestCircuit = stoil.tsearch(loadedCircuit, tests, validation, searchSettings)
     print(string.format("elapsed time: %.2f\n", os.clock() - x))
-    print("Best Cost: "..bestCost)
+    --print("Best Cost: "..bestCost)
     circuit.toGraphviz(bestCircuit, "out/final"..i)
 end
 
