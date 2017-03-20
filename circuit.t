@@ -2,6 +2,10 @@ require("tablehelpers")
 require("util")
 NodeType = {INTERNAL={},INPUT={},OUTPUT={}}
 
+local terra max(a : int32, b : int32)
+    return terralib.select( a > b, a, b)
+end
+
 local Cir = {}
 function Cir.nodeTypeString(typ)
     if typ == NodeType.INTERNAL then
@@ -425,6 +429,45 @@ local makeTerraCircuit = terralib.memoize(function(numInputs, numOutputs)
         for i=0,numInputs do
             self.inputs[i].val = [uint32]((inp >> i) and 1)
         end
+    end
+    terra TerraCircuit:addLUTPreservingTopology(newLUTIndex : int32, lutValue : int32, inputs : int32[4])
+        var newLUTIndex = newLUTIndex
+        --C.printf("newLUTIndex: %d\n", newLUTIndex)
+        --C.printf("self.luts.N: %d\n", self.luts.N)
+        for i=0,self.luts.N-newLUTIndex do
+            var idx = self.luts.N-i
+            --C.printf("moving : %d to %d\n", idx-1, idx)
+            self.luts.data[idx] = self.luts.data[idx-1]
+        end
+        self.luts.N = self.luts.N+1
+        self.luts.data[newLUTIndex].inputs = inputs
+        self.luts.data[newLUTIndex].lutValue = lutValue
+        for i=newLUTIndex+1,self.luts.N do
+            --C.printf("Rewriting inputs of : %d\n", i)
+            for j=0,4 do
+                var idx = self.luts.data[i].inputs[j]
+                if idx >= (newLUTIndex + numInputs) then
+                    idx = idx + 1
+                end
+                --C.printf("%d -> %d\n", self.luts.data[i].inputs[j], idx)
+                self.luts.data[i].inputs[j] = idx
+            end
+        end
+        for i=0,numOutputs do
+            --C.printf("Rewriting input of output %d\n", i)
+            var idx = self.outputs[i].inputIndex
+            if idx >= (newLUTIndex + numInputs) then
+                idx = idx + 1
+            end
+            --C.printf("%d -> %d\n", self.outputs[i].inputIndex, idx)
+            self.outputs[i].inputIndex = idx
+        end
+    end
+    terra TerraCircuit:setLUTInputs(lutIndex : int32, inputs : int32[4])
+        self.luts.data[lutIndex].inputs = inputs
+    end
+    terra TerraCircuit:setOutInput(outIndex : int32, inIndex : int32)
+        self.outputs[outIndex].inputIndex = inIndex
     end
     terra TerraCircuit:hammingDist(inp : uint64, out : uint64)
         --C.printf("About to set Inputs\n")
