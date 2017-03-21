@@ -30,9 +30,15 @@ local terra min(a : double, b : double)
     return terralib.select( a < b, a, b)
 end
 
+local terra seedRand()
+    C.srand(C.time([&int64](0)))
+end
+seedRand()
+
+
 function ss.terraBasedStochasticSearch(initialCircuit, testCases, validationCases, settings)
     log.trace("Stochastic Search")
-    local tCircuitGen,TerraCircuitType = cc.createTerraCircuit(initialCircuit)
+    local tCircuitGen,TerraCircuitType = cc.createTerraCircuit(initialCircuit, settings.maxInternalNodes)
     local valSet = cc.createTerraTestSet(validationCases)
     local tSet = cc.createTerraTestSet(testCases)
     local totalProposalMass = settings.addMass + settings.deleteMass + settings.inputSwapMass + settings.lutChangeMass
@@ -57,7 +63,10 @@ function ss.terraBasedStochasticSearch(initialCircuit, testCases, validationCase
             var outIndex = wireIndex - newCircuit.luts.N*4
             --C.printf("outIndex: %d\n", outIndex)
             var lutInput = newCircuit.outputs[outIndex].inputIndex
-            var inputs = arrayof(int32, lutInput, GROUND, GROUND, GROUND)
+            var inp1 = randomu32(rng) % lutToGlobalIndex(nodeIndex)
+            var inp2 = randomu32(rng) % lutToGlobalIndex(nodeIndex)
+            var inp3 = randomu32(rng) % lutToGlobalIndex(nodeIndex)
+            var inputs = arrayof(int32, lutInput, inp1, inp2, inp3)
             newCircuit:setLUTInputs(nodeIndex, inputs)
             newCircuit:setOutInput(outIndex, lutToGlobalIndex(nodeIndex))
             newCircuit.luts.N = newCircuit.luts.N + 1
@@ -69,7 +78,10 @@ function ss.terraBasedStochasticSearch(initialCircuit, testCases, validationCase
             --C.printf("inputIndex: %d\n", inputIndex)
             var oldInputIndex = newCircuit.luts.data[nodeIndex].inputs[inputIndex]
             --C.printf("oldInputIndex: %d\n", oldInputIndex)
-            var inputs = arrayof(int32, oldInputIndex, GROUND, GROUND, GROUND)
+            var inp1 = randomu32(rng) % lutToGlobalIndex(nodeIndex)
+            var inp2 = randomu32(rng) % lutToGlobalIndex(nodeIndex)
+            var inp3 = randomu32(rng) % lutToGlobalIndex(nodeIndex)
+            var inputs = arrayof(int32, oldInputIndex, inp1, inp2, inp3)
             --C.printf("GROUND: %d\n", inputs[1])
             newCircuit:addLUTPreservingTopology(nodeIndex, lutValue, inputs)
             newCircuit.luts.data[nodeIndex+1].inputs[inputIndex] = lutToGlobalIndex(nodeIndex)
@@ -253,7 +265,6 @@ function ss.terraBasedStochasticSearch(initialCircuit, testCases, validationCase
         return totalCost, errCost
     end
 
-
     local terra stochasticSearch()
         var rng : C.pcg32_random_t
         var seed : uint64 = C.rand()
@@ -271,7 +282,7 @@ function ss.terraBasedStochasticSearch(initialCircuit, testCases, validationCase
         var initialCircuit : TerraCircuitType = tCircuitGen()
         var validationSet = valSet
         var testSet = tSet
-
+        initialCircuit:toGraphviz("out/terra")
 
         var currentCircuit = initialCircuit
         var currentCost, currentCorrectCost = cost(&initialCircuit, testSet, validationSet)
@@ -314,7 +325,7 @@ function ss.terraBasedStochasticSearch(initialCircuit, testCases, validationCase
                             C.printf("Cost: %f, correctnessCost: %f\n", currentCost, currentCorrectCost)
                         end
                     end
-                    
+                    currentCircuit:toGraphviz("out/best")
                     --if log.level == "debug" or log.level == "trace" then
                     --    cc.toGraphviz(currentCircuit, "out/correct"..(#correctCircuits + 1))
                     --end
@@ -337,6 +348,7 @@ function ss.terraBasedStochasticSearch(initialCircuit, testCases, validationCase
             end
             if i % 100000 == 0 then
                 C.printf("Iteration: %d\n",i)
+                currentCircuit:toGraphviz("out/current")
             end
             --[[if (((i+1) % settings.iterationsBetweenRestarts) == 0) or (i+1) == settings.totalIterations then
                 if log.level == "debug" or log.level == "trace" then

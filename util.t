@@ -14,6 +14,7 @@ C = terralib.includecstring [[
     #include <stdio.h>
     #include <stdlib.h>
     #include <math.h>
+    #include <time.h>
 
 // *Really* minimal PCG32 code / (c) 2014 M.E. O'Neill / pcg-random.org
 // Licensed under Apache License 2.0 (NO WARRANTY, etc. see website)

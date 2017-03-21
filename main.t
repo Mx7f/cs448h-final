@@ -30,49 +30,34 @@ local testSettings = {
 local tests, validation = stoil.testAndValidationSet(stoil.wrapCircuit(loadedCircuit), testSettings)
 
 
-local time = os.clock()
-local errorCost = 0
-for i=0,100 do
-    for _,test in ipairs(validation) do
-        errorCost = errorCost + hammingDistance(test.output, stoil.runCircuit(loadedCircuit, test.input))
-    end
-end
-print(string.format("elapsed time: %.5f", os.clock() - time))
-print("Lua simulate "..tostring(errorCost))
-
-
-local tCircuitGen,tCircuitType = circuit.createTerraCircuit(loadedCircuit)
-local tCirc = tCircuitGen()
-loadedCircuit = circuit.terraCircuitToLuaCircuit(tCirc)
-circuit.toGraphviz(loadedCircuit, "roundtrip")
-local tSet = circuit.createTerraTestSet(validation)
-errorCost = 0
-time = os.clock()
-for i=0,100 do
-    errorCost = errorCost + tCirc:hammingErrorOnTestSet(tSet)
-end
-print(string.format("elapsed time: %.5f", os.clock() - time))
-print("Terra simulate "..tostring(errorCost))
 
 local searchSettings = stoil.defaultSearchSettings
-searchSettings.maxInternalNodes = 100
+searchSettings.maxInternalNodes = 50
 searchSettings.weightSize = 0.01
-searchSettings.weightCritical = 1
-searchSettings.weightCorrect = 0.00001
-searchSettings.totalIterations = 100000000
-searchSettings.iterationsBetweenRestarts = 10000000
-searchSettings.beta = 0.01
+searchSettings.weightCritical = 10
+searchSettings.weightCorrect = 0.005
+searchSettings.totalIterations = 1000000000
+searchSettings.iterationsBetweenRestarts = 100000000
+searchSettings.beta = 1.0
+searchSettings.lutChangeMass = 5
+searchSettings.inputSwapMass = 5
 
+
+loadedCircuit = circuit.emptyCircuit(16,9)
 print("Before search")
 math.randomseed(123498)
 --for i=1,3 do circuit.deleteNode(fourBitDecoder, fourBitDecoder.internalNodes[1]) end
+
+--loadedCircuit = circuit.emptyCircuit(8,5)
 for i=1,10 do 
     local x = os.clock()
     --local bestCircuit, bestCost, improved, correctCircuits = stoil.search(loadedCircuit, tests, validation, searchSettings)
     local bestCircuit = stoil.tsearch(loadedCircuit, tests, validation, searchSettings)
     print(string.format("elapsed time: %.2f\n", os.clock() - x))
     --print("Best Cost: "..bestCost)
-    circuit.toGraphviz(bestCircuit, "out/final"..i)
+    local cCirc, circType = circuit.createTerraCircuit(bestCircuit, searchSettings.maxInternalNodes)
+    cCirc():toGraphviz("out/final"..i)
+    --circuit.createTerraCircuit(bestCircuit):toGraphviz("out/final"..i)
 end
 
 --

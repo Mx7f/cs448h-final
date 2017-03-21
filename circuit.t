@@ -391,10 +391,10 @@ local struct TerraLUTNode {
     val         : uint32
 }
 
-local makeTerraCircuit = terralib.memoize(function(numInputs, numOutputs)
+local makeTerraCircuit = terralib.memoize(function(numInputs, numOutputs, maxInternalNodes)
     local struct TerraCircuit {
         inputs  : TerraInputNode[numInputs]
-        luts : BoundedArray(TerraLUTNode, 100) -- TODO:Abstract
+        luts : BoundedArray(TerraLUTNode, maxInternalNodes) -- TODO:Abstract
         outputs : TerraOutputNode[numOutputs]
     }
     terra TerraCircuit:simulate()
@@ -430,6 +430,82 @@ local makeTerraCircuit = terralib.memoize(function(numInputs, numOutputs)
             self.inputs[i].val = [uint32]((inp >> i) and 1)
         end
     end
+
+    local showConstantInputs = false
+    terra TerraCircuit:toGraphviz(filename : rawstring)
+        var inputCount : uint32 = [numInputs]
+        if not [showConstantInputs] then
+            inputCount = inputCount - 2
+        end
+
+        var fp = C.fopen(filename, "w")
+        --Header
+        C.fprintf(fp, "digraph {\nrankdir = TB;\nsubgraph {\n")
+
+        --Input Nodes
+        for i=0,inputCount do
+            C.fprintf(fp, "    node%d [label=\"input%d\"]\n", i, i)
+        end
+
+        --Internal Nodes
+        C.fprintf(fp, "node[shape=box]\n")
+        for i=0,self.luts.N do
+            C.fprintf(fp, "    node%d [label=\"%04x\"]\n", [numInputs] + i, self.luts.data[i].lutValue)
+        end
+
+        --Output Nodes
+        C.fprintf(fp, "node[shape=oval]\n")
+        for i=0,[numOutputs] do
+            C.fprintf(fp, "    output%d [label=\"output%d\"]\n", i, i)
+        end
+
+        -- Edges
+        for i=0,self.luts.N do
+            for j=0,4 do
+                var inp = self.luts.data[i].inputs[j]
+                if [showConstantInputs] or (inp >= [numInputs]) or (inp < inputCount) then
+                    C.fprintf(fp, "        node%d -> node%d\n", inp, [numInputs] + i)
+                end
+            end
+        end
+        for i=0,[numOutputs] do
+            var inp = self.outputs[i].inputIndex
+            if [showConstantInputs] or (inp >= [numInputs]) or (inp < inputCount) then
+                C.fprintf(fp, "        node%d -> output%d\n", inp, i)
+            end
+        end
+
+        -- Fake edges to sort inputs
+        for i=0,inputCount-1 do
+            C.fprintf(fp, "        node%d -> node%d [style=invis]\n", i, i+1)
+        end
+        -- Fake edges to sort outputs
+        for i=0,[numOutputs]-1 do
+            C.fprintf(fp, "        output%d -> output%d [style=invis]\n", i, i+1)
+        end
+
+        -- Put inputs at the top
+        C.fprintf(fp, "    {rank = same; ")
+        for i=0,inputCount do
+            C.fprintf(fp, "node%d;", i)
+        end
+        C.fprintf(fp, "}\n")
+
+        -- Put outputs at the bottom
+        C.fprintf(fp, "    {rank = same; ")
+        for i=0,[numOutputs] do
+            C.fprintf(fp, "output%d;", i)
+        end
+        C.fprintf(fp, "}\n")
+        --Footer
+        C.fprintf(fp, "} /* closing subgraph */\n")
+        --if useCostLabel then
+        --    C.fprintf(fp, "label=\"Cost %f; Error Cost %f\"\nlabelloc=top;\nlabeljust=left;\n", cost, errorCost)
+        --end
+        C.fprintf(fp, "}\n")
+        C.fclose(fp)
+    end
+
     terra TerraCircuit:addLUTPreservingTopology(newLUTIndex : int32, lutValue : int32, inputs : int32[4])
         var newLUTIndex = newLUTIndex
         --C.printf("newLUTIndex: %d\n", newLUTIndex)
@@ -525,7 +601,7 @@ function Cir.terraCircuitToLuaCircuit(terraCircuit)
     return luaCircuit
 end
 
-function Cir.createTerraCircuit(circuit)
+function Cir.createTerraCircuit(circuit, maxInternalNodes)
     local nodesToIndices = {}
     for i,v in ipairs(circuit.inputs) do
         nodesToIndices[v] = i-1
@@ -533,7 +609,7 @@ function Cir.createTerraCircuit(circuit)
     for i,v in ipairs(circuit.internalNodes) do
         nodesToIndices[v] = i-1+(#circuit.inputs)
     end
-    local tCircType = makeTerraCircuit(#circuit.inputs, #circuit.outputs)
+    local tCircType = makeTerraCircuit(#circuit.inputs, #circuit.outputs, maxInternalNodes)
     local terra createCircuit()
         var circ : tCircType
         circ.luts:resize([#circuit.internalNodes])
