@@ -36,7 +36,7 @@ end
 seedRand()
 
 
-function ss.terraBasedStochasticSearch(initialCircuit, testCases, validationCases, settings)
+function ss.terraBasedStochasticSearch(initialCircuit, testCases, validationCases, settings, outBestName, outCurrentName)
     log.trace("Stochastic Search")
     local tCircuitGen,TerraCircuitType = cc.createTerraCircuit(initialCircuit, settings.maxInternalNodes)
     local valSet = cc.createTerraTestSet(validationCases)
@@ -282,7 +282,6 @@ function ss.terraBasedStochasticSearch(initialCircuit, testCases, validationCase
         var initialCircuit : TerraCircuitType = tCircuitGen()
         var validationSet = valSet
         var testSet = tSet
-        initialCircuit:toGraphviz("out/terra")
 
         var currentCircuit = initialCircuit
         var currentCost, currentCorrectCost = cost(&initialCircuit, testSet, validationSet)
@@ -325,7 +324,7 @@ function ss.terraBasedStochasticSearch(initialCircuit, testCases, validationCase
                             C.printf("Cost: %f, correctnessCost: %f\n", currentCost, currentCorrectCost)
                         end
                     end
-                    currentCircuit:toGraphviz("out/best")
+                    currentCircuit:toGraphviz(outBestName)
                     --if log.level == "debug" or log.level == "trace" then
                     --    cc.toGraphviz(currentCircuit, "out/correct"..(#correctCircuits + 1))
                     --end
@@ -348,7 +347,7 @@ function ss.terraBasedStochasticSearch(initialCircuit, testCases, validationCase
             end
             if i % 100000 == 0 then
                 C.printf("Iteration: %d\n",i)
-                currentCircuit:toGraphviz("out/current")
+                currentCircuit:toGraphviz(outCurrentName)
             end
             --[[if (((i+1) % settings.iterationsBetweenRestarts) == 0) or (i+1) == settings.totalIterations then
                 if log.level == "debug" or log.level == "trace" then

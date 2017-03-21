@@ -48,6 +48,13 @@ ss.iterationsBetweenRestarts = 1000000
 settings["Add5"] = ss
 settings["Sub5"] = ss
 
+ss = table.shallowcopy(ss)
+ss.maxInternalNodes = 100
+ss.iterationsBetweenRestarts = 1000000
+ss.weightCorrect = 0.0025
+settings["Add8"] = ss
+settings["Sub8"] = ss
+
 
 ss = table.shallowcopy(ss)
 ss.maxInternalNodes = 40
@@ -68,7 +75,7 @@ settings["mul3"] = ss
 settings["mul2"] = ss
 
 ss = table.shallowcopy(ss)
-ss.maxInternalNodes = 40
+ss.maxInternalNodes = 80
 settings["mul4"] = ss
 
 ss = table.shallowcopy(ss)
@@ -141,21 +148,23 @@ local function mul(bitCount)
     end
     return mult
 end
-
---local loadedCircuit, tests, validation, searchSettings = getFullTest("Sub5", false)
+local theName = "Sub8"
+--local loadedCircuit, tests, validation, searchSettings = getFullTest(theName, false)
 local hlsTestParams = {}
 local pop10Tests = { {1023,10}, {1022,9}, {1021,9}, {511,9}, {510,8} } 
 hlsTestParams["pop10"] = {func = populationCount, inbits = 10, outbits = 4, testCount = 16, extraTests = pop10Tests}
 hlsTestParams["pop7"] = {func = populationCount, inbits = 7, outbits = 3, testCount = 16}
-hlsTestParams["mul4"] = {func = mul(4), inbits = 8, outbits = 8, testCount = 16}
+local mul4Tests = { {221,169}, {255,225}, {159,135} }
+hlsTestParams["mul4"] = {func = mul(4), inbits = 8, outbits = 8, testCount = 16, extraTests = mul4Tests}
 hlsTestParams["mul3"] = {func = mul(3), inbits = 6, outbits = 6, testCount = 16}
-hlsTestParams["mul2"] = {func = mul(2), inbits = 4, outbits = 4, testCount = 4}
+hlsTestParams["mul2"] = {func = mul(2), inbits = 4, outbits = 4, testCount = 16}
 local hlsName = "mul4"
 local hlsP = hlsTestParams[hlsName]
+--theName = hlsName
 local loadedCircuit, tests, validation, searchSettings = getHLSTest(hlsName,hlsP.func,hlsP.inbits,hlsP.outbits,hlsP.testCount, hlsP.extraTests)
 local x = os.clock()
 --local bestCircuit, bestCost, improved, correctCircuits = stoil.search(loadedCircuit, tests, validation, searchSettings)
-local bestCircuit = stoil.tsearch(loadedCircuit, tests, validation, searchSettings)
+local bestCircuit = stoil.tsearch(loadedCircuit, tests, validation, searchSettings, "out/best", "out/current")
 print(string.format("elapsed time: %.2f\n", os.clock() - x))
 --print("Best Cost: "..bestCost)
 local cCirc, circType = circuit.createTerraCircuit(bestCircuit, searchSettings.maxInternalNodes)
