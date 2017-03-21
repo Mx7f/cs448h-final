@@ -5,6 +5,8 @@ local sim = require("simulation")
 
 local ss = {}
 
+local partialLUTRewrites = true
+
 ss.defaultSearchSettings = {
     addMass = 1,
     deleteMass = 1,
@@ -128,11 +130,24 @@ function ss.terraBasedStochasticSearch(initialCircuit, testCases, validationCase
         return newCircuit
     end
 
+
+
     local terra lutChangeRewrite(circuit : &TerraCircuitType, r : double, rng : &C.pcg32_random_t)
         --C.printf("lutChangeRewrite\n")
         var newCircuit = @circuit
         var index = [int32](r*newCircuit.luts.N)
-        var lutVal = randomu32(rng) and [uint32]([math.pow(2,16)-1])
+        var lutVal : uint32 
+
+        if [partialLUTRewrites] then
+            var temp = randomu32(rng)
+            var mask = (temp >> 16) and [uint32]([math.pow(2,16)-1])
+            var val = temp and [uint32]([math.pow(2,16)-1])
+            var invmask = mask ^ [uint32]([math.pow(2,16)-1])
+            lutVal = (mask and val) or (invmask and newCircuit.luts.data[index].lutValue)
+        else
+            lutVal = randomu32(rng) and [uint32]([math.pow(2,16)-1])
+        end
+
         --C.printf("New lutVal = %d\n", lutVal)
         newCircuit.luts.data[index].lutValue = lutVal
         return newCircuit
@@ -206,7 +221,7 @@ function ss.terraBasedStochasticSearch(initialCircuit, testCases, validationCase
     local terra criticalPathLength(circuit : &TerraCircuitType)
         var maxPathLength : int32 = 0
         for i=0,[#initialCircuit.outputs] do
-            var dist : int32 = furthestDistanceToInput(circuit, circuit.outputs[i].inputIndex)
+            var dist : int32 = furthestDistanceToInput(circuit, circuit.outputs[i].inputIndex)+1
             maxPathLength = max(maxPathLength, dist)
         end
         return maxPathLength
@@ -216,9 +231,11 @@ function ss.terraBasedStochasticSearch(initialCircuit, testCases, validationCase
         var testResult = [double](proposal:hammingErrorOnTestSet(testSet))
         -- Adjustment to make sure failing N tests is worse than failing N+1 validation cases
         -- after passing all test cases
-        testResult = testResult * (validationSet.N + 1)
+        testResult = testResult * (validationSet.N + 1)*[#initialCircuit.inputs]
         if testResult == 0 then
+
             testResult = [double](proposal:hammingErrorOnTestSet(validationSet))
+            --C.printf("VALIDATION: %f\n", testResult)
         end
         return testResult
     end
@@ -242,7 +259,15 @@ function ss.terraBasedStochasticSearch(initialCircuit, testCases, validationCase
         var seed : uint64 = C.rand()
         seed = (seed << 32) or C.rand()
         rng.state = seed
-        rng.inc = (seed ^ 423398434) + 23983682
+        seed = C.rand()
+        seed = (seed << 32) or C.rand()
+        rng.inc = seed
+        --rng.state = 1344398434
+        --rng.inc = 423398434
+        C.printf("%lu %lu\n", rng.state, rng.inc)
+
+        for i=0,15 do random01(&rng) end
+
         var initialCircuit : TerraCircuitType = tCircuitGen()
         var validationSet = valSet
         var testSet = tSet
@@ -250,6 +275,7 @@ function ss.terraBasedStochasticSearch(initialCircuit, testCases, validationCase
 
         var currentCircuit = initialCircuit
         var currentCost, currentCorrectCost = cost(&initialCircuit, testSet, validationSet)
+        var anyCorrectFound = (currentCorrectCost == 0.0)
         var bestIncorrectCost = currentCost
         var bestCircuit = initialCircuit
         var bestCost = currentCost
@@ -272,9 +298,23 @@ function ss.terraBasedStochasticSearch(initialCircuit, testCases, validationCase
                 currentCost = rewriteCost
                 currentCorrectCost = rewriteCorrectnessCost
                 currentCircuit = rewriteCircuit
-                if currentCorrectCost == 0 and currentCost < bestCost then
-                    C.printf("======================= NEW BEST CIRCUIT %d =========================", i)
-                    C.printf("Cost: %f\n", currentCost)
+                if (currentCorrectCost == 0 or (not anyCorrectFound)) and currentCost < bestCost then
+                    if anyCorrectFound then
+                        C.printf("======================= NEW BEST CORRECT CIRCUIT %d =========================\n", i)
+                        C.printf("Cost: %f\n", currentCost)
+                    else
+                        if currentCorrectCost == 0.0 then
+                            C.printf("==================================================\n")
+                            C.printf(" CORRECT IMPLEMENTATION FOUND!!!! %d, cost: %f\n", i, currentCost)
+                            C.printf("==================================================\n")
+                            C.printf("Cost: %f\n", currentCost)
+                            anyCorrectFound = true 
+                        else 
+                            C.printf("-------------------- NEW BEST INCORRECT CIRCUIT %d --------------------\n", i)
+                            C.printf("Cost: %f, correctnessCost: %f\n", currentCost, currentCorrectCost)
+                        end
+                    end
+                    
                     --if log.level == "debug" or log.level == "trace" then
                     --    cc.toGraphviz(currentCircuit, "out/correct"..(#correctCircuits + 1))
                     --end

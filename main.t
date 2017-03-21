@@ -20,11 +20,11 @@ require("util")
 local coreir = require("coreir")
 local circuit = stoil.circuit
 
-local loadedCircuit = coreir.load("circuits/Add4.json")
+local loadedCircuit = coreir.load("circuits/Add8.json")
 local testSettings = {
     inputMin = 0,
-    inputMax = math.pow(2,8)-1,
-    testCount = 16,
+    inputMax = math.pow(2,16)-1,
+    testCount = 64,
     validationCount = -1 -- If negative, use full range of inputs to generate validation
 }
 local tests, validation = stoil.testAndValidationSet(stoil.wrapCircuit(loadedCircuit), testSettings)
@@ -55,13 +55,16 @@ print(string.format("elapsed time: %.5f", os.clock() - time))
 print("Terra simulate "..tostring(errorCost))
 
 local searchSettings = stoil.defaultSearchSettings
-searchSettings.maxInternalNodes = 20
+searchSettings.maxInternalNodes = 100
 searchSettings.weightSize = 0.01
-
-
+searchSettings.weightCritical = 1
+searchSettings.weightCorrect = 0.00001
+searchSettings.totalIterations = 100000000
+searchSettings.iterationsBetweenRestarts = 10000000
+searchSettings.beta = 0.01
 
 print("Before search")
-
+math.randomseed(123498)
 --for i=1,3 do circuit.deleteNode(fourBitDecoder, fourBitDecoder.internalNodes[1]) end
 for i=1,10 do 
     local x = os.clock()

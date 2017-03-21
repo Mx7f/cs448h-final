@@ -228,6 +228,7 @@ function ss.stochasticSearch(initialCircuit, testSet, validationSet, settings)
         local rewriteCircuit = createRewrite(currentCircuit,settings)
         log.trace("Rewritten")
         local rewriteCost,rewriteCorrectnessCost = cost(rewriteCircuit, testSet, validationSet, settings)
+        --print("rewriteCost "..rewriteCost)
         if log.level == "debug" or log.level == "trace" then 
             cc.nodeSanityCheck(currentCircuit)
             print("========")
@@ -235,6 +236,7 @@ function ss.stochasticSearch(initialCircuit, testSet, validationSet, settings)
         end
         if acceptRewrite(rewriteCost, currentCost, settings) then
             log.info("Iteration "..i.." Rewrite accepted with cost: "..rewriteCost..", correctness cost: "..rewriteCorrectnessCost)
+            print("Iteration "..i.." Rewrite accepted with cost: "..rewriteCost..", correctness cost: "..rewriteCorrectnessCost)
             currentCost = rewriteCost
             currentCorrectCost = rewriteCorrectnessCost
             currentCircuit = rewriteCircuit

@@ -394,7 +394,7 @@ local struct TerraLUTNode {
 local makeTerraCircuit = terralib.memoize(function(numInputs, numOutputs)
     local struct TerraCircuit {
         inputs  : TerraInputNode[numInputs]
-        luts : BoundedArray(TerraLUTNode, 20) -- TODO:Abstract
+        luts : BoundedArray(TerraLUTNode, 100) -- TODO:Abstract
         outputs : TerraOutputNode[numOutputs]
     }
     terra TerraCircuit:simulate()
