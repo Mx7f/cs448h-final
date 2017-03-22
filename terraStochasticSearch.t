@@ -282,7 +282,8 @@ function ss.terraBasedStochasticSearch(initialCircuit, testCases, validationCase
         var initialCircuit : TerraCircuitType = tCircuitGen()
         var validationSet = valSet
         var testSet = tSet
-
+        initialCircuit:toGraphviz("out/init")
+        initialCircuit:toGraphviz(outBestName)
         var currentCircuit = initialCircuit
         var currentCost, currentCorrectCost = cost(&initialCircuit, testSet, validationSet)
         var anyCorrectFound = (currentCorrectCost == 0.0)
@@ -347,6 +348,7 @@ function ss.terraBasedStochasticSearch(initialCircuit, testCases, validationCase
             end
             if i % 100000 == 0 then
                 C.printf("Iteration: %d\n",i)
+                C.printf("Cost: %f, correctnessCost: %f\n", currentCost, currentCorrectCost)
                 currentCircuit:toGraphviz(outCurrentName)
             end
             --[[if (((i+1) % settings.iterationsBetweenRestarts) == 0) or (i+1) == settings.totalIterations then
