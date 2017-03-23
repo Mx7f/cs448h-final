@@ -167,6 +167,8 @@ function ss.terraBasedStochasticSearch(initialCircuit, testCases, validationCase
         return newCircuit
     end
 
+    local terra resortTopology(circuit : &TerraCircuitType)
+
     local terra createRewrite(circuit : &TerraCircuitType, rng : &C.pcg32_random_t)
         var massSum : double = totalProposalMass
         var N = circuit.luts.N
