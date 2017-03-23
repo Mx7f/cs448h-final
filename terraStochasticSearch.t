@@ -44,6 +44,8 @@ function ss.terraBasedStochasticSearch(initialCircuit, testCases, validationCase
     local totalProposalMass = settings.addMass + settings.deleteMass + settings.inputSwapMass + settings.lutChangeMass
     local GROUND = #initialCircuit.inputs - 2
 
+    print("Initial variables called")
+
     local terra lutToGlobalIndex(lutIndex : int32)
         return lutIndex + [#initialCircuit.inputs]
     end
@@ -266,6 +268,7 @@ function ss.terraBasedStochasticSearch(initialCircuit, testCases, validationCase
     end
 
     local terra stochasticSearch()
+        C.printf("In compiled Stochastic search\n")
         var rng : C.pcg32_random_t
         var seed : uint64 = C.rand()
         seed = (seed << 32) or C.rand()
@@ -378,6 +381,7 @@ function ss.terraBasedStochasticSearch(initialCircuit, testCases, validationCase
     --cc.toGraphviz(cc.terraCircuitToLuaCircuit(tC2),"out/test2")
     --cc.toGraphviz(cc.terraCircuitToLuaCircuit(tC3),"out/test3")
 --]]
+    print("Setup complete, calling terra implementation")
     return cc.terraCircuitToLuaCircuit(stochasticSearch())
 end
 return ss

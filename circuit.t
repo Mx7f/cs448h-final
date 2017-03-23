@@ -610,6 +610,7 @@ function Cir.createTerraCircuit(circuit, maxInternalNodes)
         nodesToIndices[v] = i-1+(#circuit.inputs)
     end
     local tCircType = makeTerraCircuit(#circuit.inputs, #circuit.outputs, maxInternalNodes)
+    print("Creating Terra Circuit")
     local terra createCircuit()
         var circ : tCircType
         circ.luts:resize([#circuit.internalNodes])

@@ -87,156 +87,8 @@
                         {
                            "metadata": null,
                            "path": [
-                              "inst0_inst1",
-                              [
-                                 "O"
-                              ]
-                           ]
-                        },
-                        {
-                           "metadata": null,
-                           "path": [
                               "inst1_inst2",
                               [
-                                 "I2"
-                              ]
-                           ]
-                        },
-                        null
-                     ],
-                     [
-                        {
-                           "metadata": null,
-                           "path": [
-                              "inst1_inst1",
-                              [
-                                 "CO"
-                              ]
-                           ]
-                        },
-                        {
-                           "metadata": null,
-                           "path": [
-                              "inst1_inst2",
-                              [
-                                 "I3"
-                              ]
-                           ]
-                        },
-                        null
-                     ],
-                     [
-                        {
-                           "metadata": null,
-                           "path": [
-                              "self",
-                              [
-                                 "_Sub8.I0",
-                                 "1"
-                              ]
-                           ]
-                        },
-                        {
-                           "metadata": null,
-                           "path": [
-                              "inst1_inst2",
-                              [
-                                 "I1"
-                              ]
-                           ]
-                        },
-                        null
-                     ],
-                     [
-                        {
-                           "metadata": null,
-                           "path": [
-                              "inst0_inst0",
-                              [
-                                 "O"
-                              ]
-                           ]
-                        },
-                        {
-                           "metadata": null,
-                           "path": [
-                              "inst1_inst0",
-                              [
-                                 "I2"
-                              ]
-                           ]
-                        },
-                        null
-                     ],
-                     [
-                        {
-                           "metadata": null,
-                           "path": [
-                              "self",
-                              [
-                                 "GROUND"
-                              ]
-                           ]
-                        },
-                        {
-                           "metadata": null,
-                           "path": [
-                              "inst1_inst0",
-                              [
-                                 "I3"
-                              ]
-                           ]
-                        },
-                        null
-                     ],
-                     [
-                        {
-                           "metadata": null,
-                           "path": [
-                              "self",
-                              [
-                                 "GROUND"
-                              ]
-                           ]
-                        },
-                        {
-                           "metadata": null,
-                           "path": [
-                              "inst0_inst3",
-                              [
-                                 "I1"
-                              ]
-                           ]
-                        },
-                        null
-                     ],
-                     [
-                        {
-                           "metadata": null,
-                           "path": [
-                              "self",
-                              [
-                                 "GROUND"
-                              ]
-                           ]
-                        },
-                        {
-                           "metadata": null,
-                           "path": [
-                              "inst0_inst6",
-                              [
-                                 "I3"
-                              ]
-                           ]
-                        },
-                        null
-                     ],
-                     [
-                        {
-                           "metadata": null,
-                           "path": [
-                              "inst1_inst5",
-                              [
                                  "I0"
                               ]
                            ]
@@ -246,371 +98,7 @@
                            "path": [
                               "self",
                               [
-                                 "_Sub8.I0",
-                                 "2"
-                              ]
-                           ]
-                        },
-                        null
-                     ],
-                     [
-                        {
-                           "metadata": null,
-                           "path": [
-                              "inst1_inst15",
-                              [
-                                 "CI"
-                              ]
-                           ]
-                        },
-                        {
-                           "metadata": null,
-                           "path": [
-                              "inst1_inst13",
-                              [
-                                 "CO"
-                              ]
-                           ]
-                        },
-                        null
-                     ],
-                     [
-                        {
-                           "metadata": null,
-                           "path": [
-                              "inst1_inst9",
-                              [
-                                 "I0"
-                              ]
-                           ]
-                        },
-                        {
-                           "metadata": null,
-                           "path": [
-                              "self",
-                              [
-                                 "_Sub8.I0",
-                                 "4"
-                              ]
-                           ]
-                        },
-                        null
-                     ],
-                     [
-                        {
-                           "metadata": null,
-                           "path": [
-                              "inst0_inst4",
-                              [
-                                 "I3"
-                              ]
-                           ]
-                        },
-                        {
-                           "metadata": null,
-                           "path": [
-                              "self",
-                              [
                                  "GROUND"
-                              ]
-                           ]
-                        },
-                        null
-                     ],
-                     [
-                        {
-                           "metadata": null,
-                           "path": [
-                              "inst0_inst4",
-                              [
-                                 "I2"
-                              ]
-                           ]
-                        },
-                        {
-                           "metadata": null,
-                           "path": [
-                              "self",
-                              [
-                                 "GROUND"
-                              ]
-                           ]
-                        },
-                        null
-                     ],
-                     [
-                        {
-                           "metadata": null,
-                           "path": [
-                              "self",
-                              [
-                                 "_Sub8.I1",
-                                 "3"
-                              ]
-                           ]
-                        },
-                        {
-                           "metadata": null,
-                           "path": [
-                              "inst0_inst3",
-                              [
-                                 "I0"
-                              ]
-                           ]
-                        },
-                        null
-                     ],
-                     [
-                        {
-                           "metadata": null,
-                           "path": [
-                              "inst0_inst4",
-                              [
-                                 "I1"
-                              ]
-                           ]
-                        },
-                        {
-                           "metadata": null,
-                           "path": [
-                              "self",
-                              [
-                                 "GROUND"
-                              ]
-                           ]
-                        },
-                        null
-                     ],
-                     [
-                        {
-                           "metadata": null,
-                           "path": [
-                              "inst1_inst9",
-                              [
-                                 "I1"
-                              ]
-                           ]
-                        },
-                        {
-                           "metadata": null,
-                           "path": [
-                              "inst0_inst4",
-                              [
-                                 "O"
-                              ]
-                           ]
-                        },
-                        null
-                     ],
-                     [
-                        {
-                           "metadata": null,
-                           "path": [
-                              "inst0_inst4",
-                              [
-                                 "I0"
-                              ]
-                           ]
-                        },
-                        {
-                           "metadata": null,
-                           "path": [
-                              "self",
-                              [
-                                 "_Sub8.I1",
-                                 "4"
-                              ]
-                           ]
-                        },
-                        null
-                     ],
-                     [
-                        {
-                           "metadata": null,
-                           "path": [
-                              "inst1_inst10",
-                              [
-                                 "I3"
-                              ]
-                           ]
-                        },
-                        {
-                           "metadata": null,
-                           "path": [
-                              "inst1_inst9",
-                              [
-                                 "CO"
-                              ]
-                           ]
-                        },
-                        null
-                     ],
-                     [
-                        {
-                           "metadata": null,
-                           "path": [
-                              "inst0_inst7",
-                              [
-                                 "I1"
-                              ]
-                           ]
-                        },
-                        {
-                           "metadata": null,
-                           "path": [
-                              "self",
-                              [
-                                 "GROUND"
-                              ]
-                           ]
-                        },
-                        null
-                     ],
-                     [
-                        {
-                           "metadata": null,
-                           "path": [
-                              "inst1_inst8",
-                              [
-                                 "I1"
-                              ]
-                           ]
-                        },
-                        {
-                           "metadata": null,
-                           "path": [
-                              "self",
-                              [
-                                 "_Sub8.I0",
-                                 "4"
-                              ]
-                           ]
-                        },
-                        null
-                     ],
-                     [
-                        {
-                           "metadata": null,
-                           "path": [
-                              "inst0_inst5",
-                              [
-                                 "I0"
-                              ]
-                           ]
-                        },
-                        {
-                           "metadata": null,
-                           "path": [
-                              "self",
-                              [
-                                 "_Sub8.I1",
-                                 "5"
-                              ]
-                           ]
-                        },
-                        null
-                     ],
-                     [
-                        {
-                           "metadata": null,
-                           "path": [
-                              "inst0_inst5",
-                              [
-                                 "I1"
-                              ]
-                           ]
-                        },
-                        {
-                           "metadata": null,
-                           "path": [
-                              "self",
-                              [
-                                 "GROUND"
-                              ]
-                           ]
-                        },
-                        null
-                     ],
-                     [
-                        {
-                           "metadata": null,
-                           "path": [
-                              "self",
-                              [
-                                 "GROUND"
-                              ]
-                           ]
-                        },
-                        {
-                           "metadata": null,
-                           "path": [
-                              "inst1_inst0",
-                              [
-                                 "I0"
-                              ]
-                           ]
-                        },
-                        null
-                     ],
-                     [
-                        {
-                           "metadata": null,
-                           "path": [
-                              "inst0_inst5",
-                              [
-                                 "I3"
-                              ]
-                           ]
-                        },
-                        {
-                           "metadata": null,
-                           "path": [
-                              "self",
-                              [
-                                 "GROUND"
-                              ]
-                           ]
-                        },
-                        null
-                     ],
-                     [
-                        {
-                           "metadata": null,
-                           "path": [
-                              "inst1_inst10",
-                              [
-                                 "I1"
-                              ]
-                           ]
-                        },
-                        {
-                           "metadata": null,
-                           "path": [
-                              "self",
-                              [
-                                 "_Sub8.I0",
-                                 "5"
-                              ]
-                           ]
-                        },
-                        null
-                     ],
-                     [
-                        {
-                           "metadata": null,
-                           "path": [
-                              "inst1_inst15",
-                              [
-                                 "I1"
-                              ]
-                           ]
-                        },
-                        {
-                           "metadata": null,
-                           "path": [
-                              "inst0_inst7",
-                              [
-                                 "O"
                               ]
                            ]
                         },
@@ -641,53 +129,9 @@
                         {
                            "metadata": null,
                            "path": [
-                              "inst1_inst15",
+                              "inst1_inst0",
                               [
                                  "I0"
-                              ]
-                           ]
-                        },
-                        {
-                           "metadata": null,
-                           "path": [
-                              "self",
-                              [
-                                 "_Sub8.I0",
-                                 "7"
-                              ]
-                           ]
-                        },
-                        null
-                     ],
-                     [
-                        {
-                           "metadata": null,
-                           "path": [
-                              "inst1_inst11",
-                              [
-                                 "I0"
-                              ]
-                           ]
-                        },
-                        {
-                           "metadata": null,
-                           "path": [
-                              "self",
-                              [
-                                 "_Sub8.I0",
-                                 "5"
-                              ]
-                           ]
-                        },
-                        null
-                     ],
-                     [
-                        {
-                           "metadata": null,
-                           "path": [
-                              "inst0_inst0",
-                              [
-                                 "I1"
                               ]
                            ]
                         },
@@ -706,19 +150,19 @@
                         {
                            "metadata": null,
                            "path": [
-                              "self",
+                              "inst1_inst0",
                               [
-                                 "_Sub8.O",
-                                 "7"
+                                 "I1"
                               ]
                            ]
                         },
                         {
                            "metadata": null,
                            "path": [
-                              "inst1_inst14",
+                              "self",
                               [
-                                 "O"
+                                 "_Sub8.I0",
+                                 "0"
                               ]
                            ]
                         },
@@ -728,9 +172,30 @@
                         {
                            "metadata": null,
                            "path": [
-                              "inst1_inst4",
+                              "inst0_inst6",
                               [
-                                 "I1"
+                                 "I3"
+                              ]
+                           ]
+                        },
+                        {
+                           "metadata": null,
+                           "path": [
+                              "self",
+                              [
+                                 "GROUND"
+                              ]
+                           ]
+                        },
+                        null
+                     ],
+                     [
+                        {
+                           "metadata": null,
+                           "path": [
+                              "inst1_inst5",
+                              [
+                                 "I0"
                               ]
                            ]
                         },
@@ -750,158 +215,9 @@
                         {
                            "metadata": null,
                            "path": [
-                              "inst1_inst14",
+                              "inst1_inst15",
                               [
-                                 "I0"
-                              ]
-                           ]
-                        },
-                        {
-                           "metadata": null,
-                           "path": [
-                              "self",
-                              [
-                                 "GROUND"
-                              ]
-                           ]
-                        },
-                        null
-                     ],
-                     [
-                        {
-                           "metadata": null,
-                           "path": [
-                              "inst1_inst10",
-                              [
-                                 "I0"
-                              ]
-                           ]
-                        },
-                        {
-                           "metadata": null,
-                           "path": [
-                              "self",
-                              [
-                                 "GROUND"
-                              ]
-                           ]
-                        },
-                        null
-                     ],
-                     [
-                        {
-                           "metadata": null,
-                           "path": [
-                              "inst1_inst14",
-                              [
-                                 "I1"
-                              ]
-                           ]
-                        },
-                        {
-                           "metadata": null,
-                           "path": [
-                              "self",
-                              [
-                                 "_Sub8.I0",
-                                 "7"
-                              ]
-                           ]
-                        },
-                        null
-                     ],
-                     [
-                        {
-                           "metadata": null,
-                           "path": [
-                              "inst1_inst6",
-                              [
-                                 "I3"
-                              ]
-                           ]
-                        },
-                        {
-                           "metadata": null,
-                           "path": [
-                              "inst1_inst5",
-                              [
-                                 "CO"
-                              ]
-                           ]
-                        },
-                        null
-                     ],
-                     [
-                        {
-                           "metadata": null,
-                           "path": [
-                              "inst1_inst12",
-                              [
-                                 "I1"
-                              ]
-                           ]
-                        },
-                        {
-                           "metadata": null,
-                           "path": [
-                              "self",
-                              [
-                                 "_Sub8.I0",
-                                 "6"
-                              ]
-                           ]
-                        },
-                        null
-                     ],
-                     [
-                        {
-                           "metadata": null,
-                           "path": [
-                              "inst1_inst14",
-                              [
-                                 "I2"
-                              ]
-                           ]
-                        },
-                        {
-                           "metadata": null,
-                           "path": [
-                              "inst0_inst7",
-                              [
-                                 "O"
-                              ]
-                           ]
-                        },
-                        null
-                     ],
-                     [
-                        {
-                           "metadata": null,
-                           "path": [
-                              "inst0_inst1",
-                              [
-                                 "I1"
-                              ]
-                           ]
-                        },
-                        {
-                           "metadata": null,
-                           "path": [
-                              "self",
-                              [
-                                 "GROUND"
-                              ]
-                           ]
-                        },
-                        null
-                     ],
-                     [
-                        {
-                           "metadata": null,
-                           "path": [
-                              "inst1_inst14",
-                              [
-                                 "I3"
+                                 "CI"
                               ]
                            ]
                         },
@@ -920,87 +236,33 @@
                         {
                            "metadata": null,
                            "path": [
-                              "inst1_inst4",
+                              "inst1_inst9",
+                              [
+                                 "I1"
+                              ]
+                           ]
+                        },
+                        {
+                           "metadata": null,
+                           "path": [
+                              "inst0_inst4",
+                              [
+                                 "O"
+                              ]
+                           ]
+                        },
+                        null
+                     ],
+                     [
+                        {
+                           "metadata": null,
+                           "path": [
+                              "inst0_inst4",
                               [
                                  "I3"
                               ]
                            ]
                         },
-                        {
-                           "metadata": null,
-                           "path": [
-                              "inst1_inst3",
-                              [
-                                 "CO"
-                              ]
-                           ]
-                        },
-                        null
-                     ],
-                     [
-                        {
-                           "metadata": null,
-                           "path": [
-                              "inst1_inst7",
-                              [
-                                 "CI"
-                              ]
-                           ]
-                        },
-                        {
-                           "metadata": null,
-                           "path": [
-                              "inst1_inst5",
-                              [
-                                 "CO"
-                              ]
-                           ]
-                        },
-                        null
-                     ],
-                     [
-                        {
-                           "metadata": null,
-                           "path": [
-                              "inst1_inst11",
-                              [
-                                 "I1"
-                              ]
-                           ]
-                        },
-                        {
-                           "metadata": null,
-                           "path": [
-                              "inst0_inst5",
-                              [
-                                 "O"
-                              ]
-                           ]
-                        },
-                        null
-                     ],
-                     [
-                        {
-                           "metadata": null,
-                           "path": [
-                              "inst1_inst7",
-                              [
-                                 "I1"
-                              ]
-                           ]
-                        },
-                        {
-                           "metadata": null,
-                           "path": [
-                              "inst0_inst3",
-                              [
-                                 "O"
-                              ]
-                           ]
-                        },
-                        null
-                     ],
-                     [
                         {
                            "metadata": null,
                            "path": [
@@ -1010,12 +272,47 @@
                               ]
                            ]
                         },
+                        null
+                     ],
+                     [
                         {
                            "metadata": null,
                            "path": [
-                              "inst1_inst1",
+                              "inst0_inst4",
                               [
-                                 "CI"
+                                 "I0"
+                              ]
+                           ]
+                        },
+                        {
+                           "metadata": null,
+                           "path": [
+                              "self",
+                              [
+                                 "_Sub8.I1",
+                                 "4"
+                              ]
+                           ]
+                        },
+                        null
+                     ],
+                     [
+                        {
+                           "metadata": null,
+                           "path": [
+                              "inst1_inst10",
+                              [
+                                 "I1"
+                              ]
+                           ]
+                        },
+                        {
+                           "metadata": null,
+                           "path": [
+                              "self",
+                              [
+                                 "_Sub8.I0",
+                                 "5"
                               ]
                            ]
                         },
@@ -1046,9 +343,30 @@
                         {
                            "metadata": null,
                            "path": [
-                              "inst1_inst12",
+                              "inst1_inst10",
                               [
                                  "I3"
+                              ]
+                           ]
+                        },
+                        {
+                           "metadata": null,
+                           "path": [
+                              "inst1_inst9",
+                              [
+                                 "CO"
+                              ]
+                           ]
+                        },
+                        null
+                     ],
+                     [
+                        {
+                           "metadata": null,
+                           "path": [
+                              "inst1_inst13",
+                              [
+                                 "CI"
                               ]
                            ]
                         },
@@ -1067,49 +385,7 @@
                         {
                            "metadata": null,
                            "path": [
-                              "inst0_inst0",
-                              [
-                                 "I2"
-                              ]
-                           ]
-                        },
-                        {
-                           "metadata": null,
-                           "path": [
-                              "self",
-                              [
-                                 "GROUND"
-                              ]
-                           ]
-                        },
-                        null
-                     ],
-                     [
-                        {
-                           "metadata": null,
-                           "path": [
-                              "inst0_inst7",
-                              [
-                                 "I2"
-                              ]
-                           ]
-                        },
-                        {
-                           "metadata": null,
-                           "path": [
-                              "self",
-                              [
-                                 "GROUND"
-                              ]
-                           ]
-                        },
-                        null
-                     ],
-                     [
-                        {
-                           "metadata": null,
-                           "path": [
-                              "inst1_inst8",
+                              "inst0_inst1",
                               [
                                  "I0"
                               ]
@@ -1120,114 +396,8 @@
                            "path": [
                               "self",
                               [
-                                 "GROUND"
-                              ]
-                           ]
-                        },
-                        null
-                     ],
-                     [
-                        {
-                           "metadata": null,
-                           "path": [
-                              "inst1_inst5",
-                              [
-                                 "CI"
-                              ]
-                           ]
-                        },
-                        {
-                           "metadata": null,
-                           "path": [
-                              "inst1_inst3",
-                              [
-                                 "CO"
-                              ]
-                           ]
-                        },
-                        null
-                     ],
-                     [
-                        {
-                           "metadata": null,
-                           "path": [
-                              "inst1_inst4",
-                              [
-                                 "I2"
-                              ]
-                           ]
-                        },
-                        {
-                           "metadata": null,
-                           "path": [
-                              "inst0_inst2",
-                              [
-                                 "O"
-                              ]
-                           ]
-                        },
-                        null
-                     ],
-                     [
-                        {
-                           "metadata": null,
-                           "path": [
-                              "self",
-                              [
-                                 "_Sub8.O",
-                                 "3"
-                              ]
-                           ]
-                        },
-                        {
-                           "metadata": null,
-                           "path": [
-                              "inst1_inst6",
-                              [
-                                 "O"
-                              ]
-                           ]
-                        },
-                        null
-                     ],
-                     [
-                        {
-                           "metadata": null,
-                           "path": [
-                              "self",
-                              [
-                                 "_Sub8.O",
-                                 "6"
-                              ]
-                           ]
-                        },
-                        {
-                           "metadata": null,
-                           "path": [
-                              "inst1_inst12",
-                              [
-                                 "O"
-                              ]
-                           ]
-                        },
-                        null
-                     ],
-                     [
-                        {
-                           "metadata": null,
-                           "path": [
-                              "inst1_inst12",
-                              [
-                                 "I2"
-                              ]
-                           ]
-                        },
-                        {
-                           "metadata": null,
-                           "path": [
-                              "inst0_inst6",
-                              [
-                                 "O"
+                                 "_Sub8.I1",
+                                 "1"
                               ]
                            ]
                         },
@@ -1258,69 +428,6 @@
                         {
                            "metadata": null,
                            "path": [
-                              "inst0_inst1",
-                              [
-                                 "I2"
-                              ]
-                           ]
-                        },
-                        {
-                           "metadata": null,
-                           "path": [
-                              "self",
-                              [
-                                 "GROUND"
-                              ]
-                           ]
-                        },
-                        null
-                     ],
-                     [
-                        {
-                           "metadata": null,
-                           "path": [
-                              "inst0_inst7",
-                              [
-                                 "I3"
-                              ]
-                           ]
-                        },
-                        {
-                           "metadata": null,
-                           "path": [
-                              "self",
-                              [
-                                 "GROUND"
-                              ]
-                           ]
-                        },
-                        null
-                     ],
-                     [
-                        {
-                           "metadata": null,
-                           "path": [
-                              "self",
-                              [
-                                 "GROUND"
-                              ]
-                           ]
-                        },
-                        {
-                           "metadata": null,
-                           "path": [
-                              "inst1_inst2",
-                              [
-                                 "I0"
-                              ]
-                           ]
-                        },
-                        null
-                     ],
-                     [
-                        {
-                           "metadata": null,
-                           "path": [
                               "inst0_inst7",
                               [
                                  "I0"
@@ -1343,74 +450,9 @@
                         {
                            "metadata": null,
                            "path": [
-                              "self",
-                              [
-                                 "_Sub8.O",
-                                 "2"
-                              ]
-                           ]
-                        },
-                        {
-                           "metadata": null,
-                           "path": [
-                              "inst1_inst4",
-                              [
-                                 "O"
-                              ]
-                           ]
-                        },
-                        null
-                     ],
-                     [
-                        {
-                           "metadata": null,
-                           "path": [
-                              "inst0_inst2",
+                              "inst0_inst7",
                               [
                                  "I1"
-                              ]
-                           ]
-                        },
-                        {
-                           "metadata": null,
-                           "path": [
-                              "self",
-                              [
-                                 "GROUND"
-                              ]
-                           ]
-                        },
-                        null
-                     ],
-                     [
-                        {
-                           "metadata": null,
-                           "path": [
-                              "inst1_inst3",
-                              [
-                                 "I0"
-                              ]
-                           ]
-                        },
-                        {
-                           "metadata": null,
-                           "path": [
-                              "self",
-                              [
-                                 "_Sub8.I0",
-                                 "1"
-                              ]
-                           ]
-                        },
-                        null
-                     ],
-                     [
-                        {
-                           "metadata": null,
-                           "path": [
-                              "inst0_inst2",
-                              [
-                                 "I3"
                               ]
                            ]
                         },
@@ -1431,27 +473,6 @@
                            "path": [
                               "inst1_inst8",
                               [
-                                 "I3"
-                              ]
-                           ]
-                        },
-                        {
-                           "metadata": null,
-                           "path": [
-                              "inst1_inst7",
-                              [
-                                 "CO"
-                              ]
-                           ]
-                        },
-                        null
-                     ],
-                     [
-                        {
-                           "metadata": null,
-                           "path": [
-                              "inst1_inst4",
-                              [
                                  "I0"
                               ]
                            ]
@@ -1462,134 +483,6 @@
                               "self",
                               [
                                  "GROUND"
-                              ]
-                           ]
-                        },
-                        null
-                     ],
-                     [
-                        {
-                           "metadata": null,
-                           "path": [
-                              "inst1_inst13",
-                              [
-                                 "I1"
-                              ]
-                           ]
-                        },
-                        {
-                           "metadata": null,
-                           "path": [
-                              "inst0_inst6",
-                              [
-                                 "O"
-                              ]
-                           ]
-                        },
-                        null
-                     ],
-                     [
-                        {
-                           "metadata": null,
-                           "path": [
-                              "inst0_inst1",
-                              [
-                                 "I3"
-                              ]
-                           ]
-                        },
-                        {
-                           "metadata": null,
-                           "path": [
-                              "self",
-                              [
-                                 "GROUND"
-                              ]
-                           ]
-                        },
-                        null
-                     ],
-                     [
-                        {
-                           "metadata": null,
-                           "path": [
-                              "inst1_inst6",
-                              [
-                                 "I0"
-                              ]
-                           ]
-                        },
-                        {
-                           "metadata": null,
-                           "path": [
-                              "self",
-                              [
-                                 "GROUND"
-                              ]
-                           ]
-                        },
-                        null
-                     ],
-                     [
-                        {
-                           "metadata": null,
-                           "path": [
-                              "self",
-                              [
-                                 "_Sub8.O",
-                                 "0"
-                              ]
-                           ]
-                        },
-                        {
-                           "metadata": null,
-                           "path": [
-                              "inst1_inst0",
-                              [
-                                 "O"
-                              ]
-                           ]
-                        },
-                        null
-                     ],
-                     [
-                        {
-                           "metadata": null,
-                           "path": [
-                              "self",
-                              [
-                                 "_Sub8.O",
-                                 "1"
-                              ]
-                           ]
-                        },
-                        {
-                           "metadata": null,
-                           "path": [
-                              "inst1_inst2",
-                              [
-                                 "O"
-                              ]
-                           ]
-                        },
-                        null
-                     ],
-                     [
-                        {
-                           "metadata": null,
-                           "path": [
-                              "self",
-                              [
-                                 "GROUND"
-                              ]
-                           ]
-                        },
-                        {
-                           "metadata": null,
-                           "path": [
-                              "inst0_inst6",
-                              [
-                                 "I1"
                               ]
                            ]
                         },
@@ -1601,27 +494,6 @@
                            "path": [
                               "inst1_inst8",
                               [
-                                 "I2"
-                              ]
-                           ]
-                        },
-                        {
-                           "metadata": null,
-                           "path": [
-                              "inst0_inst4",
-                              [
-                                 "O"
-                              ]
-                           ]
-                        },
-                        null
-                     ],
-                     [
-                        {
-                           "metadata": null,
-                           "path": [
-                              "inst1_inst6",
-                              [
                                  "I1"
                               ]
                            ]
@@ -1632,241 +504,7 @@
                               "self",
                               [
                                  "_Sub8.I0",
-                                 "3"
-                              ]
-                           ]
-                        },
-                        null
-                     ],
-                     [
-                        {
-                           "metadata": null,
-                           "path": [
-                              "inst1_inst5",
-                              [
-                                 "I1"
-                              ]
-                           ]
-                        },
-                        {
-                           "metadata": null,
-                           "path": [
-                              "inst0_inst2",
-                              [
-                                 "O"
-                              ]
-                           ]
-                        },
-                        null
-                     ],
-                     [
-                        {
-                           "metadata": null,
-                           "path": [
-                              "inst0_inst0",
-                              [
-                                 "I3"
-                              ]
-                           ]
-                        },
-                        {
-                           "metadata": null,
-                           "path": [
-                              "self",
-                              [
-                                 "GROUND"
-                              ]
-                           ]
-                        },
-                        null
-                     ],
-                     [
-                        {
-                           "metadata": null,
-                           "path": [
-                              "inst0_inst2",
-                              [
-                                 "I0"
-                              ]
-                           ]
-                        },
-                        {
-                           "metadata": null,
-                           "path": [
-                              "self",
-                              [
-                                 "_Sub8.I1",
-                                 "2"
-                              ]
-                           ]
-                        },
-                        null
-                     ],
-                     [
-                        {
-                           "metadata": null,
-                           "path": [
-                              "inst0_inst6",
-                              [
-                                 "I0"
-                              ]
-                           ]
-                        },
-                        {
-                           "metadata": null,
-                           "path": [
-                              "self",
-                              [
-                                 "_Sub8.I1",
-                                 "6"
-                              ]
-                           ]
-                        },
-                        null
-                     ],
-                     [
-                        {
-                           "metadata": null,
-                           "path": [
-                              "self",
-                              [
-                                 "_Sub8.O",
-                                 "5"
-                              ]
-                           ]
-                        },
-                        {
-                           "metadata": null,
-                           "path": [
-                              "inst1_inst10",
-                              [
-                                 "O"
-                              ]
-                           ]
-                        },
-                        null
-                     ],
-                     [
-                        {
-                           "metadata": null,
-                           "path": [
-                              "self",
-                              [
-                                 "GROUND"
-                              ]
-                           ]
-                        },
-                        {
-                           "metadata": null,
-                           "path": [
-                              "inst0_inst3",
-                              [
-                                 "I2"
-                              ]
-                           ]
-                        },
-                        null
-                     ],
-                     [
-                        {
-                           "metadata": null,
-                           "path": [
-                              "inst1_inst12",
-                              [
-                                 "I0"
-                              ]
-                           ]
-                        },
-                        {
-                           "metadata": null,
-                           "path": [
-                              "self",
-                              [
-                                 "GROUND"
-                              ]
-                           ]
-                        },
-                        null
-                     ],
-                     [
-                        {
-                           "metadata": null,
-                           "path": [
-                              "inst1_inst3",
-                              [
-                                 "I1"
-                              ]
-                           ]
-                        },
-                        {
-                           "metadata": null,
-                           "path": [
-                              "inst0_inst1",
-                              [
-                                 "O"
-                              ]
-                           ]
-                        },
-                        null
-                     ],
-                     [
-                        {
-                           "metadata": null,
-                           "path": [
-                              "inst1_inst3",
-                              [
-                                 "CI"
-                              ]
-                           ]
-                        },
-                        {
-                           "metadata": null,
-                           "path": [
-                              "inst1_inst1",
-                              [
-                                 "CO"
-                              ]
-                           ]
-                        },
-                        null
-                     ],
-                     [
-                        {
-                           "metadata": null,
-                           "path": [
-                              "inst1_inst1",
-                              [
-                                 "I1"
-                              ]
-                           ]
-                        },
-                        {
-                           "metadata": null,
-                           "path": [
-                              "inst0_inst0",
-                              [
-                                 "O"
-                              ]
-                           ]
-                        },
-                        null
-                     ],
-                     [
-                        {
-                           "metadata": null,
-                           "path": [
-                              "inst1_inst6",
-                              [
-                                 "I2"
-                              ]
-                           ]
-                        },
-                        {
-                           "metadata": null,
-                           "path": [
-                              "inst0_inst3",
-                              [
-                                 "O"
+                                 "4"
                               ]
                            ]
                         },
@@ -1878,48 +516,6 @@
                            "path": [
                               "inst0_inst5",
                               [
-                                 "I2"
-                              ]
-                           ]
-                        },
-                        {
-                           "metadata": null,
-                           "path": [
-                              "self",
-                              [
-                                 "GROUND"
-                              ]
-                           ]
-                        },
-                        null
-                     ],
-                     [
-                        {
-                           "metadata": null,
-                           "path": [
-                              "inst0_inst2",
-                              [
-                                 "I2"
-                              ]
-                           ]
-                        },
-                        {
-                           "metadata": null,
-                           "path": [
-                              "self",
-                              [
-                                 "GROUND"
-                              ]
-                           ]
-                        },
-                        null
-                     ],
-                     [
-                        {
-                           "metadata": null,
-                           "path": [
-                              "inst0_inst0",
-                              [
                                  "I0"
                               ]
                            ]
@@ -1930,73 +526,7 @@
                               "self",
                               [
                                  "_Sub8.I1",
-                                 "0"
-                              ]
-                           ]
-                        },
-                        null
-                     ],
-                     [
-                        {
-                           "metadata": null,
-                           "path": [
-                              "self",
-                              [
-                                 "_Sub8.I0",
-                                 "0"
-                              ]
-                           ]
-                        },
-                        {
-                           "metadata": null,
-                           "path": [
-                              "inst1_inst0",
-                              [
-                                 "I1"
-                              ]
-                           ]
-                        },
-                        null
-                     ],
-                     [
-                        {
-                           "metadata": null,
-                           "path": [
-                              "inst1_inst13",
-                              [
-                                 "I0"
-                              ]
-                           ]
-                        },
-                        {
-                           "metadata": null,
-                           "path": [
-                              "self",
-                              [
-                                 "_Sub8.I0",
-                                 "6"
-                              ]
-                           ]
-                        },
-                        null
-                     ],
-                     [
-                        {
-                           "metadata": null,
-                           "path": [
-                              "inst1_inst7",
-                              [
-                                 "I0"
-                              ]
-                           ]
-                        },
-                        {
-                           "metadata": null,
-                           "path": [
-                              "self",
-                              [
-                                 "_Sub8.I0",
-                                 "3"
+                                 "5"
                               ]
                            ]
                         },
@@ -2028,6 +558,1134 @@
                         {
                            "metadata": null,
                            "path": [
+                              "inst0_inst5",
+                              [
+                                 "I1"
+                              ]
+                           ]
+                        },
+                        {
+                           "metadata": null,
+                           "path": [
+                              "self",
+                              [
+                                 "GROUND"
+                              ]
+                           ]
+                        },
+                        null
+                     ],
+                     [
+                        {
+                           "metadata": null,
+                           "path": [
+                              "inst0_inst3",
+                              [
+                                 "I0"
+                              ]
+                           ]
+                        },
+                        {
+                           "metadata": null,
+                           "path": [
+                              "self",
+                              [
+                                 "_Sub8.I1",
+                                 "3"
+                              ]
+                           ]
+                        },
+                        null
+                     ],
+                     [
+                        {
+                           "metadata": null,
+                           "path": [
+                              "inst1_inst11",
+                              [
+                                 "I1"
+                              ]
+                           ]
+                        },
+                        {
+                           "metadata": null,
+                           "path": [
+                              "inst0_inst5",
+                              [
+                                 "O"
+                              ]
+                           ]
+                        },
+                        null
+                     ],
+                     [
+                        {
+                           "metadata": null,
+                           "path": [
+                              "inst1_inst11",
+                              [
+                                 "I0"
+                              ]
+                           ]
+                        },
+                        {
+                           "metadata": null,
+                           "path": [
+                              "self",
+                              [
+                                 "_Sub8.I0",
+                                 "5"
+                              ]
+                           ]
+                        },
+                        null
+                     ],
+                     [
+                        {
+                           "metadata": null,
+                           "path": [
+                              "inst1_inst15",
+                              [
+                                 "I0"
+                              ]
+                           ]
+                        },
+                        {
+                           "metadata": null,
+                           "path": [
+                              "self",
+                              [
+                                 "_Sub8.I0",
+                                 "7"
+                              ]
+                           ]
+                        },
+                        null
+                     ],
+                     [
+                        {
+                           "metadata": null,
+                           "path": [
+                              "inst0_inst0",
+                              [
+                                 "I2"
+                              ]
+                           ]
+                        },
+                        {
+                           "metadata": null,
+                           "path": [
+                              "self",
+                              [
+                                 "GROUND"
+                              ]
+                           ]
+                        },
+                        null
+                     ],
+                     [
+                        {
+                           "metadata": null,
+                           "path": [
+                              "inst0_inst3",
+                              [
+                                 "I3"
+                              ]
+                           ]
+                        },
+                        {
+                           "metadata": null,
+                           "path": [
+                              "self",
+                              [
+                                 "GROUND"
+                              ]
+                           ]
+                        },
+                        null
+                     ],
+                     [
+                        {
+                           "metadata": null,
+                           "path": [
+                              "inst1_inst8",
+                              [
+                                 "I2"
+                              ]
+                           ]
+                        },
+                        {
+                           "metadata": null,
+                           "path": [
+                              "inst0_inst4",
+                              [
+                                 "O"
+                              ]
+                           ]
+                        },
+                        null
+                     ],
+                     [
+                        {
+                           "metadata": null,
+                           "path": [
+                              "inst1_inst15",
+                              [
+                                 "I1"
+                              ]
+                           ]
+                        },
+                        {
+                           "metadata": null,
+                           "path": [
+                              "inst0_inst7",
+                              [
+                                 "O"
+                              ]
+                           ]
+                        },
+                        null
+                     ],
+                     [
+                        {
+                           "metadata": null,
+                           "path": [
+                              "inst0_inst0",
+                              [
+                                 "I3"
+                              ]
+                           ]
+                        },
+                        {
+                           "metadata": null,
+                           "path": [
+                              "self",
+                              [
+                                 "GROUND"
+                              ]
+                           ]
+                        },
+                        null
+                     ],
+                     [
+                        {
+                           "metadata": null,
+                           "path": [
+                              "inst0_inst0",
+                              [
+                                 "I1"
+                              ]
+                           ]
+                        },
+                        {
+                           "metadata": null,
+                           "path": [
+                              "self",
+                              [
+                                 "GROUND"
+                              ]
+                           ]
+                        },
+                        null
+                     ],
+                     [
+                        {
+                           "metadata": null,
+                           "path": [
+                              "inst1_inst4",
+                              [
+                                 "I0"
+                              ]
+                           ]
+                        },
+                        {
+                           "metadata": null,
+                           "path": [
+                              "self",
+                              [
+                                 "GROUND"
+                              ]
+                           ]
+                        },
+                        null
+                     ],
+                     [
+                        {
+                           "metadata": null,
+                           "path": [
+                              "inst1_inst14",
+                              [
+                                 "I3"
+                              ]
+                           ]
+                        },
+                        {
+                           "metadata": null,
+                           "path": [
+                              "inst1_inst13",
+                              [
+                                 "CO"
+                              ]
+                           ]
+                        },
+                        null
+                     ],
+                     [
+                        {
+                           "metadata": null,
+                           "path": [
+                              "inst0_inst7",
+                              [
+                                 "I2"
+                              ]
+                           ]
+                        },
+                        {
+                           "metadata": null,
+                           "path": [
+                              "self",
+                              [
+                                 "GROUND"
+                              ]
+                           ]
+                        },
+                        null
+                     ],
+                     [
+                        {
+                           "metadata": null,
+                           "path": [
+                              "inst0_inst2",
+                              [
+                                 "O"
+                              ]
+                           ]
+                        },
+                        {
+                           "metadata": null,
+                           "path": [
+                              "inst1_inst4",
+                              [
+                                 "I2"
+                              ]
+                           ]
+                        },
+                        null
+                     ],
+                     [
+                        {
+                           "metadata": null,
+                           "path": [
+                              "inst1_inst1",
+                              [
+                                 "CO"
+                              ]
+                           ]
+                        },
+                        {
+                           "metadata": null,
+                           "path": [
+                              "inst1_inst2",
+                              [
+                                 "I3"
+                              ]
+                           ]
+                        },
+                        null
+                     ],
+                     [
+                        {
+                           "metadata": null,
+                           "path": [
+                              "inst1_inst10",
+                              [
+                                 "I0"
+                              ]
+                           ]
+                        },
+                        {
+                           "metadata": null,
+                           "path": [
+                              "self",
+                              [
+                                 "GROUND"
+                              ]
+                           ]
+                        },
+                        null
+                     ],
+                     [
+                        {
+                           "metadata": null,
+                           "path": [
+                              "inst1_inst7",
+                              [
+                                 "CI"
+                              ]
+                           ]
+                        },
+                        {
+                           "metadata": null,
+                           "path": [
+                              "inst1_inst5",
+                              [
+                                 "CO"
+                              ]
+                           ]
+                        },
+                        null
+                     ],
+                     [
+                        {
+                           "metadata": null,
+                           "path": [
+                              "inst0_inst4",
+                              [
+                                 "I1"
+                              ]
+                           ]
+                        },
+                        {
+                           "metadata": null,
+                           "path": [
+                              "self",
+                              [
+                                 "GROUND"
+                              ]
+                           ]
+                        },
+                        null
+                     ],
+                     [
+                        {
+                           "metadata": null,
+                           "path": [
+                              "self",
+                              [
+                                 "_Sub8.O",
+                                 "6"
+                              ]
+                           ]
+                        },
+                        {
+                           "metadata": null,
+                           "path": [
+                              "inst1_inst12",
+                              [
+                                 "O"
+                              ]
+                           ]
+                        },
+                        null
+                     ],
+                     [
+                        {
+                           "metadata": null,
+                           "path": [
+                              "inst1_inst4",
+                              [
+                                 "I3"
+                              ]
+                           ]
+                        },
+                        {
+                           "metadata": null,
+                           "path": [
+                              "inst1_inst3",
+                              [
+                                 "CO"
+                              ]
+                           ]
+                        },
+                        null
+                     ],
+                     [
+                        {
+                           "metadata": null,
+                           "path": [
+                              "inst1_inst7",
+                              [
+                                 "I1"
+                              ]
+                           ]
+                        },
+                        {
+                           "metadata": null,
+                           "path": [
+                              "inst0_inst3",
+                              [
+                                 "O"
+                              ]
+                           ]
+                        },
+                        null
+                     ],
+                     [
+                        {
+                           "metadata": null,
+                           "path": [
+                              "inst1_inst12",
+                              [
+                                 "I2"
+                              ]
+                           ]
+                        },
+                        {
+                           "metadata": null,
+                           "path": [
+                              "inst0_inst6",
+                              [
+                                 "O"
+                              ]
+                           ]
+                        },
+                        null
+                     ],
+                     [
+                        {
+                           "metadata": null,
+                           "path": [
+                              "inst1_inst13",
+                              [
+                                 "I1"
+                              ]
+                           ]
+                        },
+                        {
+                           "metadata": null,
+                           "path": [
+                              "inst0_inst6",
+                              [
+                                 "O"
+                              ]
+                           ]
+                        },
+                        null
+                     ],
+                     [
+                        {
+                           "metadata": null,
+                           "path": [
+                              "self",
+                              [
+                                 "_Sub8.O",
+                                 "7"
+                              ]
+                           ]
+                        },
+                        {
+                           "metadata": null,
+                           "path": [
+                              "inst1_inst14",
+                              [
+                                 "O"
+                              ]
+                           ]
+                        },
+                        null
+                     ],
+                     [
+                        {
+                           "metadata": null,
+                           "path": [
+                              "inst1_inst12",
+                              [
+                                 "I1"
+                              ]
+                           ]
+                        },
+                        {
+                           "metadata": null,
+                           "path": [
+                              "self",
+                              [
+                                 "_Sub8.I0",
+                                 "6"
+                              ]
+                           ]
+                        },
+                        null
+                     ],
+                     [
+                        {
+                           "metadata": null,
+                           "path": [
+                              "self",
+                              [
+                                 "_Sub8.O",
+                                 "5"
+                              ]
+                           ]
+                        },
+                        {
+                           "metadata": null,
+                           "path": [
+                              "inst1_inst10",
+                              [
+                                 "O"
+                              ]
+                           ]
+                        },
+                        null
+                     ],
+                     [
+                        {
+                           "metadata": null,
+                           "path": [
+                              "inst1_inst5",
+                              [
+                                 "CI"
+                              ]
+                           ]
+                        },
+                        {
+                           "metadata": null,
+                           "path": [
+                              "inst1_inst3",
+                              [
+                                 "CO"
+                              ]
+                           ]
+                        },
+                        null
+                     ],
+                     [
+                        {
+                           "metadata": null,
+                           "path": [
+                              "inst0_inst1",
+                              [
+                                 "I2"
+                              ]
+                           ]
+                        },
+                        {
+                           "metadata": null,
+                           "path": [
+                              "self",
+                              [
+                                 "GROUND"
+                              ]
+                           ]
+                        },
+                        null
+                     ],
+                     [
+                        {
+                           "metadata": null,
+                           "path": [
+                              "inst0_inst1",
+                              [
+                                 "I3"
+                              ]
+                           ]
+                        },
+                        {
+                           "metadata": null,
+                           "path": [
+                              "self",
+                              [
+                                 "GROUND"
+                              ]
+                           ]
+                        },
+                        null
+                     ],
+                     [
+                        {
+                           "metadata": null,
+                           "path": [
+                              "inst0_inst1",
+                              [
+                                 "I1"
+                              ]
+                           ]
+                        },
+                        {
+                           "metadata": null,
+                           "path": [
+                              "self",
+                              [
+                                 "GROUND"
+                              ]
+                           ]
+                        },
+                        null
+                     ],
+                     [
+                        {
+                           "metadata": null,
+                           "path": [
+                              "inst0_inst7",
+                              [
+                                 "I3"
+                              ]
+                           ]
+                        },
+                        {
+                           "metadata": null,
+                           "path": [
+                              "self",
+                              [
+                                 "GROUND"
+                              ]
+                           ]
+                        },
+                        null
+                     ],
+                     [
+                        {
+                           "metadata": null,
+                           "path": [
+                              "inst0_inst6",
+                              [
+                                 "I1"
+                              ]
+                           ]
+                        },
+                        {
+                           "metadata": null,
+                           "path": [
+                              "self",
+                              [
+                                 "GROUND"
+                              ]
+                           ]
+                        },
+                        null
+                     ],
+                     [
+                        {
+                           "metadata": null,
+                           "path": [
+                              "self",
+                              [
+                                 "_Sub8.O",
+                                 "3"
+                              ]
+                           ]
+                        },
+                        {
+                           "metadata": null,
+                           "path": [
+                              "inst1_inst6",
+                              [
+                                 "O"
+                              ]
+                           ]
+                        },
+                        null
+                     ],
+                     [
+                        {
+                           "metadata": null,
+                           "path": [
+                              "self",
+                              [
+                                 "_Sub8.I0",
+                                 "1"
+                              ]
+                           ]
+                        },
+                        {
+                           "metadata": null,
+                           "path": [
+                              "inst1_inst2",
+                              [
+                                 "I1"
+                              ]
+                           ]
+                        },
+                        null
+                     ],
+                     [
+                        {
+                           "metadata": null,
+                           "path": [
+                              "inst1_inst3",
+                              [
+                                 "I0"
+                              ]
+                           ]
+                        },
+                        {
+                           "metadata": null,
+                           "path": [
+                              "self",
+                              [
+                                 "_Sub8.I0",
+                                 "1"
+                              ]
+                           ]
+                        },
+                        null
+                     ],
+                     [
+                        {
+                           "metadata": null,
+                           "path": [
+                              "inst1_inst12",
+                              [
+                                 "I3"
+                              ]
+                           ]
+                        },
+                        {
+                           "metadata": null,
+                           "path": [
+                              "inst1_inst11",
+                              [
+                                 "CO"
+                              ]
+                           ]
+                        },
+                        null
+                     ],
+                     [
+                        {
+                           "metadata": null,
+                           "path": [
+                              "inst1_inst13",
+                              [
+                                 "I0"
+                              ]
+                           ]
+                        },
+                        {
+                           "metadata": null,
+                           "path": [
+                              "self",
+                              [
+                                 "_Sub8.I0",
+                                 "6"
+                              ]
+                           ]
+                        },
+                        null
+                     ],
+                     [
+                        {
+                           "metadata": null,
+                           "path": [
+                              "inst1_inst14",
+                              [
+                                 "I1"
+                              ]
+                           ]
+                        },
+                        {
+                           "metadata": null,
+                           "path": [
+                              "self",
+                              [
+                                 "_Sub8.I0",
+                                 "7"
+                              ]
+                           ]
+                        },
+                        null
+                     ],
+                     [
+                        {
+                           "metadata": null,
+                           "path": [
+                              "inst0_inst3",
+                              [
+                                 "I2"
+                              ]
+                           ]
+                        },
+                        {
+                           "metadata": null,
+                           "path": [
+                              "self",
+                              [
+                                 "GROUND"
+                              ]
+                           ]
+                        },
+                        null
+                     ],
+                     [
+                        {
+                           "metadata": null,
+                           "path": [
+                              "inst1_inst6",
+                              [
+                                 "I3"
+                              ]
+                           ]
+                        },
+                        {
+                           "metadata": null,
+                           "path": [
+                              "inst1_inst5",
+                              [
+                                 "CO"
+                              ]
+                           ]
+                        },
+                        null
+                     ],
+                     [
+                        {
+                           "metadata": null,
+                           "path": [
+                              "inst0_inst2",
+                              [
+                                 "I2"
+                              ]
+                           ]
+                        },
+                        {
+                           "metadata": null,
+                           "path": [
+                              "self",
+                              [
+                                 "GROUND"
+                              ]
+                           ]
+                        },
+                        null
+                     ],
+                     [
+                        {
+                           "metadata": null,
+                           "path": [
+                              "self",
+                              [
+                                 "_Sub8.O",
+                                 "2"
+                              ]
+                           ]
+                        },
+                        {
+                           "metadata": null,
+                           "path": [
+                              "inst1_inst4",
+                              [
+                                 "O"
+                              ]
+                           ]
+                        },
+                        null
+                     ],
+                     [
+                        {
+                           "metadata": null,
+                           "path": [
+                              "inst1_inst6",
+                              [
+                                 "I1"
+                              ]
+                           ]
+                        },
+                        {
+                           "metadata": null,
+                           "path": [
+                              "self",
+                              [
+                                 "_Sub8.I0",
+                                 "3"
+                              ]
+                           ]
+                        },
+                        null
+                     ],
+                     [
+                        {
+                           "metadata": null,
+                           "path": [
+                              "inst0_inst4",
+                              [
+                                 "I2"
+                              ]
+                           ]
+                        },
+                        {
+                           "metadata": null,
+                           "path": [
+                              "self",
+                              [
+                                 "GROUND"
+                              ]
+                           ]
+                        },
+                        null
+                     ],
+                     [
+                        {
+                           "metadata": null,
+                           "path": [
+                              "inst0_inst2",
+                              [
+                                 "I3"
+                              ]
+                           ]
+                        },
+                        {
+                           "metadata": null,
+                           "path": [
+                              "self",
+                              [
+                                 "GROUND"
+                              ]
+                           ]
+                        },
+                        null
+                     ],
+                     [
+                        {
+                           "metadata": null,
+                           "path": [
+                              "inst1_inst12",
+                              [
+                                 "I0"
+                              ]
+                           ]
+                        },
+                        {
+                           "metadata": null,
+                           "path": [
+                              "self",
+                              [
+                                 "GROUND"
+                              ]
+                           ]
+                        },
+                        null
+                     ],
+                     [
+                        {
+                           "metadata": null,
+                           "path": [
+                              "inst0_inst6",
+                              [
+                                 "I2"
+                              ]
+                           ]
+                        },
+                        {
+                           "metadata": null,
+                           "path": [
+                              "self",
+                              [
+                                 "GROUND"
+                              ]
+                           ]
+                        },
+                        null
+                     ],
+                     [
+                        {
+                           "metadata": null,
+                           "path": [
+                              "inst0_inst2",
+                              [
+                                 "I0"
+                              ]
+                           ]
+                        },
+                        {
+                           "metadata": null,
+                           "path": [
+                              "self",
+                              [
+                                 "_Sub8.I1",
+                                 "2"
+                              ]
+                           ]
+                        },
+                        null
+                     ],
+                     [
+                        {
+                           "metadata": null,
+                           "path": [
+                              "inst1_inst14",
+                              [
+                                 "I2"
+                              ]
+                           ]
+                        },
+                        {
+                           "metadata": null,
+                           "path": [
+                              "inst0_inst7",
+                              [
+                                 "O"
+                              ]
+                           ]
+                        },
+                        null
+                     ],
+                     [
+                        {
+                           "metadata": null,
+                           "path": [
+                              "inst1_inst1",
+                              [
+                                 "CI"
+                              ]
+                           ]
+                        },
+                        {
+                           "metadata": null,
+                           "path": [
+                              "self",
+                              [
+                                 "GROUND"
+                              ]
+                           ]
+                        },
+                        null
+                     ],
+                     [
+                        {
+                           "metadata": null,
+                           "path": [
+                              "inst1_inst8",
+                              [
+                                 "I3"
+                              ]
+                           ]
+                        },
+                        {
+                           "metadata": null,
+                           "path": [
+                              "inst1_inst7",
+                              [
+                                 "CO"
+                              ]
+                           ]
+                        },
+                        null
+                     ],
+                     [
+                        {
+                           "metadata": null,
+                           "path": [
+                              "inst1_inst3",
+                              [
+                                 "I1"
+                              ]
+                           ]
+                        },
+                        {
+                           "metadata": null,
+                           "path": [
+                              "inst0_inst1",
+                              [
+                                 "O"
+                              ]
+                           ]
+                        },
+                        null
+                     ],
+                     [
+                        {
+                           "metadata": null,
+                           "path": [
                               "inst1_inst11",
                               [
                                  "CI"
@@ -2049,7 +1707,92 @@
                         {
                            "metadata": null,
                            "path": [
-                              "inst0_inst1",
+                              "inst0_inst5",
+                              [
+                                 "I2"
+                              ]
+                           ]
+                        },
+                        {
+                           "metadata": null,
+                           "path": [
+                              "self",
+                              [
+                                 "GROUND"
+                              ]
+                           ]
+                        },
+                        null
+                     ],
+                     [
+                        {
+                           "metadata": null,
+                           "path": [
+                              "inst1_inst1",
+                              [
+                                 "CO"
+                              ]
+                           ]
+                        },
+                        {
+                           "metadata": null,
+                           "path": [
+                              "inst1_inst3",
+                              [
+                                 "CI"
+                              ]
+                           ]
+                        },
+                        null
+                     ],
+                     [
+                        {
+                           "metadata": null,
+                           "path": [
+                              "self",
+                              [
+                                 "_Sub8.O",
+                                 "0"
+                              ]
+                           ]
+                        },
+                        {
+                           "metadata": null,
+                           "path": [
+                              "inst1_inst0",
+                              [
+                                 "O"
+                              ]
+                           ]
+                        },
+                        null
+                     ],
+                     [
+                        {
+                           "metadata": null,
+                           "path": [
+                              "inst0_inst3",
+                              [
+                                 "I1"
+                              ]
+                           ]
+                        },
+                        {
+                           "metadata": null,
+                           "path": [
+                              "self",
+                              [
+                                 "GROUND"
+                              ]
+                           ]
+                        },
+                        null
+                     ],
+                     [
+                        {
+                           "metadata": null,
+                           "path": [
+                              "inst0_inst6",
                               [
                                  "I0"
                               ]
@@ -2061,7 +1804,93 @@
                               "self",
                               [
                                  "_Sub8.I1",
-                                 "1"
+                                 "6"
+                              ]
+                           ]
+                        },
+                        null
+                     ],
+                     [
+                        {
+                           "metadata": null,
+                           "path": [
+                              "inst1_inst7",
+                              [
+                                 "I0"
+                              ]
+                           ]
+                        },
+                        {
+                           "metadata": null,
+                           "path": [
+                              "self",
+                              [
+                                 "_Sub8.I0",
+                                 "3"
+                              ]
+                           ]
+                        },
+                        null
+                     ],
+                     [
+                        {
+                           "metadata": null,
+                           "path": [
+                              "inst1_inst9",
+                              [
+                                 "I0"
+                              ]
+                           ]
+                        },
+                        {
+                           "metadata": null,
+                           "path": [
+                              "self",
+                              [
+                                 "_Sub8.I0",
+                                 "4"
+                              ]
+                           ]
+                        },
+                        null
+                     ],
+                     [
+                        {
+                           "metadata": null,
+                           "path": [
+                              "inst1_inst14",
+                              [
+                                 "I0"
+                              ]
+                           ]
+                        },
+                        {
+                           "metadata": null,
+                           "path": [
+                              "self",
+                              [
+                                 "GROUND"
+                              ]
+                           ]
+                        },
+                        null
+                     ],
+                     [
+                        {
+                           "metadata": null,
+                           "path": [
+                              "inst1_inst6",
+                              [
+                                 "I2"
+                              ]
+                           ]
+                        },
+                        {
+                           "metadata": null,
+                           "path": [
+                              "inst0_inst3",
+                              [
+                                 "O"
                               ]
                            ]
                         },
@@ -2093,49 +1922,115 @@
                         {
                            "metadata": null,
                            "path": [
+                              "inst1_inst5",
+                              [
+                                 "I1"
+                              ]
+                           ]
+                        },
+                        {
+                           "metadata": null,
+                           "path": [
+                              "inst0_inst2",
+                              [
+                                 "O"
+                              ]
+                           ]
+                        },
+                        null
+                     ],
+                     [
+                        {
+                           "metadata": null,
+                           "path": [
+                              "inst1_inst4",
+                              [
+                                 "I1"
+                              ]
+                           ]
+                        },
+                        {
+                           "metadata": null,
+                           "path": [
+                              "self",
+                              [
+                                 "_Sub8.I0",
+                                 "2"
+                              ]
+                           ]
+                        },
+                        null
+                     ],
+                     [
+                        {
+                           "metadata": null,
+                           "path": [
+                              "self",
+                              [
+                                 "_Sub8.O",
+                                 "1"
+                              ]
+                           ]
+                        },
+                        {
+                           "metadata": null,
+                           "path": [
+                              "inst1_inst2",
+                              [
+                                 "O"
+                              ]
+                           ]
+                        },
+                        null
+                     ],
+                     [
+                        {
+                           "metadata": null,
+                           "path": [
+                              "inst0_inst0",
+                              [
+                                 "I0"
+                              ]
+                           ]
+                        },
+                        {
+                           "metadata": null,
+                           "path": [
+                              "self",
+                              [
+                                 "_Sub8.I1",
+                                 "0"
+                              ]
+                           ]
+                        },
+                        null
+                     ],
+                     [
+                        {
+                           "metadata": null,
+                           "path": [
+                              "inst1_inst6",
+                              [
+                                 "I0"
+                              ]
+                           ]
+                        },
+                        {
+                           "metadata": null,
+                           "path": [
                               "self",
                               [
                                  "GROUND"
                               ]
                            ]
                         },
-                        {
-                           "metadata": null,
-                           "path": [
-                              "inst0_inst3",
-                              [
-                                 "I3"
-                              ]
-                           ]
-                        },
                         null
                      ],
                      [
                         {
                            "metadata": null,
                            "path": [
-                              "inst1_inst13",
-                              [
-                                 "CI"
-                              ]
-                           ]
-                        },
-                        {
-                           "metadata": null,
-                           "path": [
-                              "inst1_inst11",
-                              [
-                                 "CO"
-                              ]
-                           ]
-                        },
-                        null
-                     ],
-                     [
-                        {
-                           "metadata": null,
-                           "path": [
-                              "inst0_inst6",
+                              "inst1_inst2",
                               [
                                  "I2"
                               ]
@@ -2144,9 +2039,114 @@
                         {
                            "metadata": null,
                            "path": [
+                              "inst0_inst1",
+                              [
+                                 "O"
+                              ]
+                           ]
+                        },
+                        null
+                     ],
+                     [
+                        {
+                           "metadata": null,
+                           "path": [
+                              "inst0_inst2",
+                              [
+                                 "I1"
+                              ]
+                           ]
+                        },
+                        {
+                           "metadata": null,
+                           "path": [
                               "self",
                               [
                                  "GROUND"
+                              ]
+                           ]
+                        },
+                        null
+                     ],
+                     [
+                        {
+                           "metadata": null,
+                           "path": [
+                              "inst1_inst0",
+                              [
+                                 "I2"
+                              ]
+                           ]
+                        },
+                        {
+                           "metadata": null,
+                           "path": [
+                              "inst0_inst0",
+                              [
+                                 "O"
+                              ]
+                           ]
+                        },
+                        null
+                     ],
+                     [
+                        {
+                           "metadata": null,
+                           "path": [
+                              "inst1_inst0",
+                              [
+                                 "I3"
+                              ]
+                           ]
+                        },
+                        {
+                           "metadata": null,
+                           "path": [
+                              "self",
+                              [
+                                 "GROUND"
+                              ]
+                           ]
+                        },
+                        null
+                     ],
+                     [
+                        {
+                           "metadata": null,
+                           "path": [
+                              "inst0_inst5",
+                              [
+                                 "I3"
+                              ]
+                           ]
+                        },
+                        {
+                           "metadata": null,
+                           "path": [
+                              "self",
+                              [
+                                 "GROUND"
+                              ]
+                           ]
+                        },
+                        null
+                     ],
+                     [
+                        {
+                           "metadata": null,
+                           "path": [
+                              "inst1_inst1",
+                              [
+                                 "I1"
+                              ]
+                           ]
+                        },
+                        {
+                           "metadata": null,
+                           "path": [
+                              "inst0_inst0",
+                              [
+                                 "O"
                               ]
                            ]
                         },
