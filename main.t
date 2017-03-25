@@ -4,10 +4,6 @@ Prototype implementation of STOIL, STOKE for icestick LUTs
 
 Author: Michael Mara, mmara@cs.stanford.edu
 
-TODO: Better LUT value manipulation
-
-TODO: Faster circuit manipulation
-
 --]]
 local stoil = require("stoil")
 require("util")
@@ -48,12 +44,20 @@ ss = table.shallowcopy(ss)
 ss.maxInternalNodes = 400
 ss.totalIterations = 400000000
 ss.iterationsBetweenRestarts = 1000000
+
 ss.weightCorrect  = 1.0
 ss.weightCritical = 0.0
 ss.weightSize = 1.0
 ss.lutChangeMass = 2
 ss.inputSwapMass = 2
 settings["SBOX"] = ss
+
+ss = table.shallowcopy(ss)
+ss.maxInternalNodes = 225
+ss.totalIterations = 400000000
+ss.iterationsBetweenRestarts = 40000000
+settings["SBOX_yale"] = ss
+settings["SBOX_yale_i"] = ss
 
 ss = table.shallowcopy(ss)
 ss.weightCritical = 1.0
@@ -153,10 +157,10 @@ local function getFullTest(name, doSynth)
         validationCount = -1 -- If negative, use full range of inputs to generate validation
     }
     print("Circuit has "..#loadedCircuit.inputs.." inputs, "..#loadedCircuit.outputs.." outputs, "..#loadedCircuit.internalNodes.." internalNodes")
-    if name == "SBOX" then
+    if name == "SBOX" or name == "SBOX_yale" then
         local sbox2 = stoil.wrapCircuit(loadedCircuit)
         for i=0,255 do
-            print(computeSBox(i).." vs "..sbox2(i))
+            print(i..": "..computeSBox(i).." vs "..sbox2(i))
         end
     end
     print("inputMax:"..testSettings.inputMax)
@@ -223,7 +227,7 @@ local function mul3i(bitCount)
     return mult
 end
 
-local theName = "SBOX"
+local theName = "SBOX_yale_i"
 local loadedCircuit, tests, validation, searchSettings = getFullTest(theName, false)
 
 local hlsTestParams = {}

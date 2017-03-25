@@ -397,6 +397,83 @@ local makeTerraCircuit = terralib.memoize(function(numInputs, numOutputs, maxInt
         luts : BoundedArray(TerraLUTNode, maxInternalNodes) -- TODO:Abstract
         outputs : TerraOutputNode[numOutputs]
     }
+
+    terra TerraCircuit:deleteLUT(nodeIndex : int32)
+        self.luts:delete(nodeIndex)
+        for i=nodeIndex,self.luts.N do
+            for j=0,4 do
+                var currIndex = self.luts.data[i].inputs[j]
+                if currIndex > nodeIndex + numInputs then
+                    self.luts.data[i].inputs[j] = currIndex-1
+                end
+            end
+        end
+        for i=0,numOutputs do
+            var currIndex = self.outputs[i].inputIndex
+            if currIndex > nodeIndex + numInputs then
+                self.outputs[i].inputIndex = currIndex-1
+            end
+        end
+    end
+
+    terra TerraCircuit:isInputIndex( index : int32)
+        return index < numInputs
+    end
+
+    terra TerraCircuit:packLUTs()
+        C.printf("For now TerraCircuit:packLUTs assumes all gates start as 2 input, I0 I1")
+        var maxInd = self.luts.N
+        for k=0,maxInd do
+            var i = maxInd - k - 1
+            var lut = self.luts.data[i]
+            var inputs : int32[2] = array(lut.inputs[0], lut.inputs[1])
+            if (not self:isInputIndex(inputs[0])) and (not self:isInputIndex(inputs[1])) then
+                -- Trivial rewiring
+                var lut0 = self.luts.data[inputs[0]-numInputs]
+                var lut1 = self.luts.data[inputs[1]-numInputs]
+                self.luts.data[i].inputs[0] = lut0.inputs[0]
+                self.luts.data[i].inputs[1] = lut0.inputs[1]
+                self.luts.data[i].inputs[2] = lut1.inputs[0]
+                self.luts.data[i].inputs[3] = lut1.inputs[1]
+
+                var oldLutVal = self.luts.data[i].lutValue
+                self.luts.data[i].lutValue = 0
+                --[[for j=0,16 do
+                    lut0.lutValue[]
+                end--]]
+            end 
+        end
+    end
+
+
+    terra TerraCircuit:pruneUnusedLUTs()
+        var used : BoundedArray(bool, maxInternalNodes)
+        used.N = self.luts.N
+        for i=0,used.N do
+            used.data[i] = false 
+        end
+        for i=0,numOutputs do
+            var index = self.outputs[i].inputIndex
+            if index >= numInputs then
+                used.data[index-numInputs] = true 
+            end
+        end
+        var maxInd = self.luts.N
+        for k=0,maxInd do
+            var i = maxInd - k - 1
+            if used.data[i] then
+                for j=0,4 do
+                    var index = self.luts.data[i].inputs[j]
+                    if index >= numInputs then
+                        used.data[index-numInputs] = true 
+                    end
+                end
+            else
+                self:deleteLUT(i)
+            end
+        end
+    end
+
     terra TerraCircuit:simulate()
         --C.printf("self.luts.N, %u\n", self.luts.N)
         for i=0,self.luts.N do
@@ -612,6 +689,7 @@ function Cir.createTerraCircuit(circuit, maxInternalNodes)
     local tCircType = makeTerraCircuit(#circuit.inputs, #circuit.outputs, maxInternalNodes)
     print("Creating Terra Circuit")
     local terra createCircuit()
+
         var circ : tCircType
         circ.luts:resize([#circuit.internalNodes])
         escape 

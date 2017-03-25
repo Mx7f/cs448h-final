@@ -53,6 +53,7 @@ function ss.terraBasedStochasticSearch(initialCircuit, testCases, validationCase
     local terra addRewrite(circuit : &TerraCircuitType, r : double, rng : &C.pcg32_random_t)
         --C.printf("addRewrite\n")
         var newCircuit : TerraCircuitType = @circuit
+
         var wireCount : int32  = newCircuit.luts.N*4 + [#initialCircuit.outputs]
         --C.printf("wireCount = %d\n", wireCount)
         --C.printf("r = %f\n", r)
@@ -166,8 +167,6 @@ function ss.terraBasedStochasticSearch(initialCircuit, testCases, validationCase
         newCircuit.luts.data[index].lutValue = lutVal
         return newCircuit
     end
-
-    local terra resortTopology(circuit : &TerraCircuitType)
 
     local terra createRewrite(circuit : &TerraCircuitType, rng : &C.pcg32_random_t)
         var massSum : double = totalProposalMass
@@ -287,6 +286,14 @@ function ss.terraBasedStochasticSearch(initialCircuit, testCases, validationCase
         var initialCircuit : TerraCircuitType = tCircuitGen()
         var validationSet = valSet
         var testSet = tSet
+
+        var prunedCircuit = initialCircuit
+        prunedCircuit:packLUTs()
+        prunedCircuit:pruneUnusedLUTs()
+        initialCircuit:toGraphviz("out/pruned")
+        C.printf("Unpacked: %d\nPacked & Pruned: %d\n", initialCircuit.luts.N, prunedCircuit.luts.N)
+
+
         initialCircuit:toGraphviz("out/init")
         initialCircuit:toGraphviz(outBestName)
         var currentCircuit = initialCircuit

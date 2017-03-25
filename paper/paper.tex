@@ -1,5 +1,10 @@
 \documentclass{article}
-
+\newcommand{\R}{\mathcal{R}}
+\newcommand{\T}{\mathcal{T}}
+\newcommand{\cost}{\mbox{cost}}
+\newcommand{\perf}{\mbox{perf}}
+\newcommand{\eq}{\mbox{eq}}
+\newcommand{\Z}{\mathbb{Z}}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{document}
@@ -28,60 +33,143 @@ May be slow.
 Large amount of shared effort so compilers generate efficient code.
 No similar shared effort in hardware (though one of the things agile hardware seeks to remedy).
 
-Recent advances in stochastic super optimization (STOKE) seek to replace and/or augment traditional optimization techniques for compilers
+Recent advances in stochastic super optimization (STOKE~\cite{schkufza2013stochastic,stoke16}) seek to replace and/or augment traditional optimization techniques for compilers.
 
-Stochastic Superoptimization of hardware
+Because combinatorial circuits are just functions, this technique readily adapts to circuit design.
+Bring fast combinatorial circuitry to the masses.
 \end{abstract}
 
 
 \section{Introduction}
-What problem are you solving?
-What will be the impact if you solve the problem?
-Why is the problem challenging? / Why hasn't it
-been solved?
-What is your approach to solving the problem?
-What is your insight? Why do you think it will
-work?
-What are the contributions of this paper?
+What problem are you solving? Optimization of combinatorial circuits.
+What will be the impact if you solve the problem? Better hardware faster.
+Why is the problem challenging? / Why hasn't it been solved? Barrier to entry of hardware is high, actual superoptimization (logic minimization)\cite{Micheli1994} is NP-hard.
+What is your approach to solving the problem? Adapt recent advances in stochastic super optimization of hardware to combinatorial circuits.
+What is your insight? Why do you think it will work? Combinatorial circuits are just functions over bitvectors, function optimization techniques can be directly applied. Stochastic superoptimization seeks to replace the thousands of local optimization techniques present in traditional compilers with a conceptually simple stochastic search. Instead of trying to reproduce person-millenia worth of work on traditional optimization techniques, can try to get similar benefits with stochastic optimization.
+What are the contributions of this paper? A proof-of-concept system that adapts stochastic super optimization to 4-bit LUT based FPGA circuits, that can both succcessfully produce optimizations of circuit designs that require less area and shorter critical paths, and synthesize circuits from scratch given a target function from bitvector to bitvector.
 
-Recent advances in stochastic super optimization (STOKE) seek to replace and/or augment traditional optimization techniques for compilers
-Recent advances in stochastic super optimization (STOKE) seek to replace and/or augment traditional optimization techniques for compilers
-Recent advances in stochastic super optimization (STOKE) seek to replace and/or augment traditional optimization techniques for compilers
-Recent advances in stochastic super optimization (STOKE) seek to replace and/or augment traditional optimization techniques for compilers
-Recent advances in stochastic super optimization (STOKE) seek to replace and/or augment traditional optimization techniques for compilers
-Recent advances in stochastic super optimization (STOKE) seek to replace and/or augment traditional optimization techniques for compilers
 
-\section{Design Goals}
+\section{Stochastic Superoptimization}
 
-Recent advances in stochastic super optimization (STOKE) seek to replace and/or augment traditional optimization techniques for compilers
-Recent advances in stochastic super optimization (STOKE) seek to replace and/or augment traditional optimization techniques for compilers
-Recent advances in stochastic super optimization (STOKE) seek to replace and/or augment traditional optimization techniques for compilers
-Recent advances in stochastic super optimization (STOKE) seek to replace and/or augment traditional optimization techniques for compilers
-Recent advances in stochastic super optimization (STOKE) seek to replace and/or augment traditional optimization techniques for compilers
-\section{Design Issues}
+Stochastic Superoptimization is at the core of STOIL, and we present a brief summary of the terminology and approach here based on~\cite{stoke16}. The original presentation was in the context of optimizing loop-free programs, we will present it in terms of combinatorial circuits. We define a combinatorial circuit as an acyclic combination of logic gates with $n$ input wires and $m$ output wires. We can view such a circuit as an implementation of a function $f : \Z_2^n \rightarrow \Z_2^m$, which maps a bitvector of length $n$ to a bitvector of length $m$. For this paper, we say two circuits are equivalent if they implement the same function (this definition of equivalence could be relaxed for circuits that do not care about the value of some bits of the output given certain input configurations, like a decoder for a Johnson counter).
 
-Recent advances in stochastic super optimization (STOKE) seek to replace and/or augment traditional optimization techniques for compilers
-Recent advances in stochastic super optimization (STOKE) seek to replace and/or augment traditional optimization techniques for compilers
-Recent advances in stochastic super optimization (STOKE) seek to replace and/or augment traditional optimization techniques for compilers
-Recent advances in stochastic super optimization (STOKE) seek to replace and/or augment traditional optimization techniques for compilers
-Recent advances in stochastic super optimization (STOKE) seek to replace and/or augment traditional optimization techniques for compilers
-Recent advances in stochastic super optimization (STOKE) seek to replace and/or augment traditional optimization techniques for compilers
+We begin by defining a cost function we wish to minimize. We refer to the input circuit as the \emph{target} ($\T$), and a candidate circuit as a rewrite ($\R$).
+
+\begin{equation}
+\cost(\R; \T ) = w_e \cdot \eq(\R; \T ) + w_p \cdot \perf(\R)
+\end{equation}
+
+The $\eq(\cdot)$ term measures the difference between the two circuits and returns zero only if the two circuits implement the same function $f : \Z_2^n \rightarrow \Z_2^m$. The $\perf(\cdot)$ term, on the other hand, quantifies the "performance" of the circuit. There are two obvious metrics to use for performance: circuit area (number of LUTs for an FPGA), and critical path length (the highest number of LUTs an input needs to traverse to get to an output). 
+
+Following  we say that the set of optimizations of $\T$ is  the set of rewrites for which the $\perf(\cdot)$ term is improved, and the $\eq(\cdot)$ term is zero.
+\begin{equation}
+\{ r | \perf(r) \le \perf(\T ) \wedge \eq(r; \T ) = 0 \}
+\end{equation}
+
+Following STOKE, STOIL uses Markov-Chain Monte-Carlo (MCMC) as a cost minimization procedure to discover these optimizations. MCMC is a method to sample from a probability density function in direct proportion to its value; higher probability samples are drawn proportionally more often than lower probability samples. By converting our cost function to a probability distribution with higher probability at lower costs, we can directly apply MCMC. Following STOKE, we define the probability density function $p(\cdot)$ as
+
+\begin{equation}
+p(\R;\T)=\frac{1}{Z}\exp(-\beta\cdot\cost(\R;\T))
+\end{equation}
+
+In order to avoid computing the normalization factor, $Z$, both STOKE and STOIL use the Metropolois-Hastings algorithm to sample this distribution.
+
+
+
+\subsection{Why MCMC?}
+Because STOKE showed it worked in a similar domain,  we had a small timeframe for implementation, and most of the components can be easily reused for other stochastic search methods.
+
+
+\section{Design Goals and Issues}
+
+We were chiefly concerned with getting a working proof-of-concept in a small time frame, so our design decisions reflect that.
+
+The performance of a stochastic superoptimization system depends jointly on several properties:
+
+\begin{enumerate}
+  \item Throughput of proposal generation
+  \item Throughput of proposal cost evaluation
+  \item Smoothness of cost function
+  \item "Quality" of proposal distribution
+\end{enumerate}
+
+Any stochastic optimization system whose proposal distribution is ergodic will produce a minimal cost optimization in the limit, but in practice we must terminate the search long before the entire search space is explored. When making a design decision, we must consider all of the properties in parallel. For example, if system A can find an optimal rewrite after N iterations on average, and system B finds the same rewrite after 100N rewrites, B could still be a more useful system if its joint throughput of proposal generation and cost evaluation is 200 times more efficient than system A.
+
+For this initial prototype, we simply chose analogous rewrite rules to STOKE that were simple to implement, and sought to optimize the throughput of proposal generation and cost evaluation.
+
 \section{Overview}
+We copied STOKE, and specialized for circuits with only LUT4s. This simplified circuit model.
+
+\subsection{Circuit Representation}
+
+\subsection{Rewrites}
+\begin{enumerate}
+  \item Change the LUT value of a single LUT
+  \item Change one input
+  \item Smoothness of cost function
+  \item "Quality" of proposal distribution
+\end{enumerate}
+
 \section{Implementation}
+Used terra \cite{DeVito2013} to implement simulators specialized to input/output/maximum internal node counts.
+
+The number of LUTs
+
 \section{Evaluation}
+We tried to optimize a few circuits, and synthesize a few others.
+
+
+\subsection{Case Study: SBOX}
+
+\begin{tabular}{ | l | c | r }
+    \hline
+    1 & 2 & 3 \\ \hline
+    4 & 5 & 6 \\ \hline
+    7 & 8 & 9 \\
+    \hline
+  \end{tabular}
+
 \section{Lessons Learned}
+Stochastic Superoptimization for circuits is viable.
+
 \section{Related Work}
-\section{Limitations}
-\section{Future Work}
-■ Start with limitations
-■ Start with the obvious next step
-(remove a limitation)
-■Finish with most exciting direction
-■ Emphasize impact
+STOKE.
+Logic Minimizers.
+Circuit Simulators.
+
+
+\section{Limitations and Future Work}
+
+STOIL is a proof-of-concept; it demonstrates the viability of stochastic super-optimization for circuit design, but there are obvious limitations and directions for future work. 
+
+\begin{itemize}
+\item Drastically increase viable circuit size for both synthesis and optimization
+\item Handle "Don't care"
+\item Adapt to heterogeneous circuits
+\item Optimize sequential circuits
+\item Integrate in an agile hardware development workflow
+\end{itemize}
+
+The main ways to increase viable circuit size is to improve the proposal distribution and the throughput of proposals.\\
+ 
+Our choice to use brute-force validation means STOIL is inherently limited to small input bit counts. The largest examples of synthesis shown in this paper were mul(3) with 6 bits of input and 6 bits of output, and popcount(7), with 7 bits of input and 3 bits of output. The largest examples for optimization that were shown in this paper is Sub(6) circuit, which has a mere 12 bits of input and 7 bits of output, and the SBOX (and inverse) circuits, with 8 bits for both input and output. STOKE demonstrated the viability of using a symbolic validator to prove equivalence on x86 instruction sequences during the MCMC search, this should be readily adaptable to circuits, and should have increased throughput. \\
+
+An interesting property of many combinatorial circuits is that there are many cases where the circuit designer does not care about certain bits of the output for certain given input; these bits are often referred to as "don't care" terms~\cite{strong2013basic}. If a circuit has "don't care" terms, it may be possible to optimize it far more than if we require those terms to be the same value as they were in the reference circuit. STOIL currently has no support for such terms, but such support would be a huge boon for certain classes of circuits.\\
+
+Followup work should also reconsider our MCMC proposals, particularly the input rewrite rule, which is likely creating artificially difficult paths to lower cost minima; this will become more relevant for larger circuits.\\
+
+Additionally, the entire stochastic search algorithm deserves greater scrutiny. Metropolis-Hastings, in the limit, samples proportionally to the probability distribution we created from the cost; but we ultimately don't care about this property, we only want to find maxima of the distribution. Other stochastic search techniques may work as well, and could be more amenable to JIT compilation on a per-proposal basis (there is ~1ms overhead for compilation of circuit simulations, this could be amortized under a search technique that evaluates a large number of candidates at once). The search could also easily be parallelized, as in STOKE; or potentially even run on a GPU.\\
+
+There is no inherent reason to limit STOIL to LUT4s as intermediate nodes; it should be straightforward to extend STOIL to handle alternate gate types. For example, we could switch the node types from the $2^16$ valid LUT4 configurations to the three 2-input gates used in much of the SBOX minimization literature (AND, XOR, NXOR).\\
+
+Followup work on STOKE relaxed the "loop-free" requirement; we could use similar techniques to handle sequential circuits.\\
+
+Our longterm vision for STOIL is to integrate it into an agile hardware development workflow. Users could use high-productively languages to specify intuitive reference circuits, and immediately run their hardware on FPGAs, while a STOIL-based system (perhaps running on a cluster or merely on background threads) could identify sub-circuits amenable to optimization and produce improved versions of the circuit in the background. In this way, novice users or hobbyists could construct novel hardware with performance approaching or exceeding that of hardware written by a large corporate team.
+
 
 
 \subsection*{Acknowledgements}
-I thank  Ross Daly for the initial inspiration of the project, and Pat Hanrahan for the opportunity to work on it.
+I thank Ross Daly for the initial inspiration of the project, and Pat Hanrahan for the opportunity to work on it.
 
 \bibliographystyle{acmsiggraph}
 \bibliography{paper}
