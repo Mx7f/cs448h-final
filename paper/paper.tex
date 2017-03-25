@@ -119,15 +119,28 @@ The number of LUTs
 We tried to optimize a few circuits, and synthesize a few others.
 
 
-\subsection{Case Study: SBOX}
+\subsection{Case Study: S-box}
 
-\begin{tabular}{ | l | c | r }
+The Rijndael S-box is a transformation that is used in the AES encryption algorithm and many related algorithms, and was specifically designed to minimize correlation between linear transformations of input/output bits. It takes 8 bits as input and produces 8 bits as output. Since the S-box is used many times in the AES encryption algorithm which is itself ubiquitous, it is often baked into hardware circuitry. There is a large amount of literature on optimizing the circuit for size/energy/critical path length~\cite{morioka2002optimized,canright2005very,boyar2011depth}.
+
+We initially tried to synthesize an S-box circuit from scratch, using only the 256 input/output pairs to generate the circuit. We quickly converge on solutions that average a little under 1.5 bits of incorrectness, but stall there, even running overnight. The lowest known complexity circuit for this function still contains well in excess of 100 gates, so this was by far the most complex circuit we attempted to synthesize. Perhaps with a better proposal distribution we will be able to synthesize this in the future.
+
+We then constructed a circuit made of 8 LUT8s (one for each output bit), and attempted to use STOIL to optimize that. This is the most generic way to map a combinatorial circuit to LUTs, and requires $(2^{n-3}-1)m$ LUT4s, for a function $f : \Z_2^n \rightarrow \Z_2^m$. In this case, $n$ and $m$ are both 8, and this requires 248 LUT4s. STOIL was unable to optimize this circuit, perhaps because any small deviation from the original circuit drastically increased cost, and the topology requires large scale changes before outputs can start sharing computation.
+
+As a final attempt, we downloaded an optimized implementation of S-box in terms of 2-input AND, XOR, and NXOR.
+
+\begin{table}
+ \begin{tabular}{ | l | c |}
+ \hline
+    Circuit & # LUTs\\ \hline
     \hline
-    1 & 2 & 3 \\ \hline
-    4 & 5 & 6 \\ \hline
-    7 & 8 & 9 \\
+    Direct Conversion & 128 \\ \hline
+    Grandparent Merge & 113 \\ \hline
+    STOIL Optimized & 84  \\
     \hline
   \end{tabular}
+  \caption{A direct conversion of an optimized SBOX circuit from 2-input AND, XOR, and NXOR gates to LUT4s requires 128 LUTs. Rewiring the inputs of each LUT to directly wire to their grandchildren in the original circuit, then pruning all now unused LUTs results in a slightly smaller circuit, but not as much savings as one might hope for, given the significantly higher flexibility of LUT4s. Taking the directly converted circuit and running through STOIL for 10 minutes produces a circuit with 84 LUT4s, a reduction in area of almost 35\%.}
+\end{end}
 
 \section{Lessons Learned}
 Stochastic Superoptimization for circuits is viable.
